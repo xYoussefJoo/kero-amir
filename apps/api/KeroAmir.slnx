@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/KeroAmir.Api/KeroAmir.Api.csproj" />
+    <Project Path="src/KeroAmir.Application/KeroAmir.Application.csproj" />
+    <Project Path="src/KeroAmir.Domain/KeroAmir.Domain.csproj" />
+    <Project Path="src/KeroAmir.Infrastructure/KeroAmir.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/KeroAmir.Tests/KeroAmir.Tests.csproj" />
+  </Folder>
+</Solution>

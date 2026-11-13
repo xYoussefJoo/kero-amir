@@ -1,0 +1,21 @@
+{
+  "Meta": {
+    "title": "Kero Amir | Senior Graphic Designer",
+    "description": "Brand identity, packaging, 3D and motion design by Kero Amir."
+  },
+  "Header": {
+    "available": "Available for work",
+    "language": "Language",
+    "switchTo": "Deutsch",
+    "themeToLight": "Switch to light theme",
+    "themeToDark": "Switch to dark theme",
+    "skipToContent": "Skip to content"
+  },
+  "Home": {
+    "label": "01 // INTRO",
+    "title": "Every piece fits.",
+    "subtitle": "Brand identity, packaging, 3D and motion for brands that want to be remembered.",
+    "ctaWork": "See the work",
+    "ctaContact": "Start a project"
+  }
+}

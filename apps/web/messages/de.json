@@ -1,0 +1,21 @@
+{
+  "Meta": {
+    "title": "Kero Amir | Senior Grafikdesigner",
+    "description": "Markenidentität, Verpackung, 3D und Motion Design von Kero Amir."
+  },
+  "Header": {
+    "available": "Verfügbar für Projekte",
+    "language": "Sprache",
+    "switchTo": "English",
+    "themeToLight": "Zum hellen Design wechseln",
+    "themeToDark": "Zum dunklen Design wechseln",
+    "skipToContent": "Zum Inhalt springen"
+  },
+  "Home": {
+    "label": "01 // INTRO",
+    "title": "Jedes Teil passt.",
+    "subtitle": "Markenidentität, Verpackung, 3D und Motion für Marken, die in Erinnerung bleiben wollen.",
+    "ctaWork": "Arbeiten ansehen",
+    "ctaContact": "Projekt starten"
+  }
+}

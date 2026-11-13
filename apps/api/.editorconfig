@@ -1,0 +1,16 @@
+root = true
+
+[*.cs]
+indent_style = space
+indent_size = 4
+csharp_style_namespace_declarations = file_scoped:warning
+
+[**/Migrations/*.cs]
+# EF Core generates these files; don't analyze them.
+generated_code = true
+dotnet_analyzer_diagnostic.severity = none
+csharp_style_namespace_declarations = block_scoped:none
+
+[tests/**.cs]
+# Test names read as sentences: Live_returns_ok
+dotnet_diagnostic.CA1707.severity = none
