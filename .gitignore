@@ -30,3 +30,7 @@ Thumbs.db
 # Hosting deploy profiles hold credentials
 *.publishSettings
 *.pubxml.user
+
+# Deploy: local secrets and publish output
+deploy/production.secrets.json
+deploy/out/

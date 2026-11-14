@@ -52,6 +52,11 @@ v1.MapTimelineEndpoints(admin);
 
 await app.Services.SeedOwnerAsync(app.Configuration);
 await app.Services.SeedContentAsync(app.Configuration);
+
+// Deploy step: seed the target database from the deploying machine, then stop (see deploy/deploy.ps1).
+if (args.Contains("--seed-and-exit"))
+    return;
+
 await app.RunAsync();
 
 // Exposed for WebApplicationFactory in the tests.

@@ -77,3 +77,7 @@ Newest at the bottom. Format: date, decision, why.
     when `Seed:Content=true`, table by table, only while a table is empty, so it never overwrites admin edits.
     Skill levels and German texts are drafts (the old site had neither); Kero reviews them in the admin.
     Placeholder social links and "Example" testimonials from the old site were deliberately not imported.
+38. **Deploy = `deploy/deploy.ps1` from the dev machine** (Web Deploy to MonsterASP): migrations and seeding run from
+    the dev machine against the production database, so the owner password never lives on the server; only the
+    connection string and JWT key go into the server's `web.config` (environment variables). Secrets sit in the
+    git-ignored `deploy/production.secrets.json`. Publish targets `win-x64` only (21 MB instead of 82 MB).
