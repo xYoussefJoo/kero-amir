@@ -1,6 +1,5 @@
 "use client";
 
-import { useTranslations } from "next-intl";
 import { useSyncExternalStore } from "react";
 
 type Theme = "light" | "dark";
@@ -15,8 +14,8 @@ function subscribe(onChange: () => void) {
   return () => observer.disconnect();
 }
 
-export function ThemeToggle() {
-  const t = useTranslations("Header");
+// Labels come from the server component (SiteHeader): no translation runtime is shipped to the browser.
+export function ThemeToggle({ toLight, toDark }: { toLight: string; toDark: string }) {
   // null on the server: the real theme is only known in the browser (set by ThemeScript).
   const theme = useSyncExternalStore<Theme | null>(subscribe, readTheme, () => null);
 
@@ -34,7 +33,7 @@ export function ThemeToggle() {
     <button
       type="button"
       onClick={toggle}
-      aria-label={theme === "dark" ? t("themeToLight") : t("themeToDark")}
+      aria-label={theme === "dark" ? toLight : toDark}
       className="grid size-10 place-items-center rounded-full border border-muted/40 text-text transition-colors hover:border-primary hover:text-primary"
     >
       {/* Sun in dark mode, moon in light mode; CSS decides so there is no hydration flash. */}

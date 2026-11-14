@@ -193,6 +193,9 @@ html[data-logo="docked"] .logo-dock { animation: dock-pop 0.55s cubic-bezier(0.3
 }
 .orbit:hover .orbit__ring,
 .orbit:hover .orbit__face { animation-play-state: paused; }
+/* Off-screen (section scattered): stop spinning, no CPU/GPU work for something nobody sees. */
+[data-assembled="false"] .orbit__ring,
+[data-assembled="false"] .orbit__face { animation-play-state: paused; }
 .orbit__chip:hover { scale: 1.18; }
 @keyframes orbit-spin {
   from { transform: rotateX(66deg) rotateZ(0deg); }

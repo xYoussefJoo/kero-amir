@@ -128,3 +128,15 @@ Newest at the bottom. Format: date, decision, why.
 50. **Section data comes from the API through `"use cache"` loaders** tagged like the API's output cache (`settings`,
     `skills`, `tools`, `timeline`, `categories`), `cacheLife("hours")`; an unreachable API renders empty sections
     instead of failing the page. The contact CTA appears once `contact.email` (or socials) is set in the CMS.
+
+## Performance pass (2026-11-14, performance-peak)
+
+51. **Kept (measured, 3 Lighthouse mobile runs, median):** absolute hreflang/canonical via `SITE_URL` (SEO 91 → 100);
+    no `NextIntlClientProvider`: header buttons get server-rendered strings as props and the language switch is a
+    plain `next/link` (initial JS 210 → 195 KB gzip, TBT 271 → 193 ms, Speed Index 3.1 → 2.0 s); the toolkit orbit
+    pauses while its section is off-screen.
+52. **Reverted:** one page-wide pointer listener instead of per-card `MagneticTilt` hydration: TBT got worse
+    (193 → 343 ms), so per-card stays.
+53. **Remaining LCP gap is simulated, not observed:** Lighthouse's simulated LCP is ~3.2 s (4x CPU), but the
+    observed LCP is 328 ms (= FCP; the headline text). Closing the simulated gap needs visual trade-offs
+    (font-display: optional, or delaying hero animations) and is left for the owner to decide.

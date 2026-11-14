@@ -1,18 +1,20 @@
-import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
+import type { Locale } from "@/i18n/routing";
 import { Logo } from "@/components/ui/Logo";
 import { LocaleSwitcher } from "@/components/ui/LocaleSwitcher";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 export function SiteHeader() {
   const t = useTranslations("Header");
+  const locale = useLocale() as Locale;
 
   return (
     // Sticky, so the logo slot stays on screen: the hero K flies into it on scroll (PuzzleLogo3D).
     <header className="sticky top-0 z-30 w-full bg-bg/80 backdrop-blur-md">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
         <div className="flex items-center gap-3">
-          <Link href="/" className="rounded-sm">
+          <Link href={`/${locale}`} className="rounded-sm">
             <span data-logo-dock className="logo-dock block">
               <Logo size={40} priority />
             </span>
@@ -24,8 +26,8 @@ export function SiteHeader() {
           </span>
         </div>
         <div className="flex items-center gap-4">
-          <LocaleSwitcher />
-          <ThemeToggle />
+          <LocaleSwitcher locale={locale} label={`${t("language")}: ${t("switchTo")}`} />
+          <ThemeToggle toLight={t("themeToLight")} toDark={t("themeToDark")} />
         </div>
       </div>
     </header>
