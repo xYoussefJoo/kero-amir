@@ -47,28 +47,28 @@ body { font-size: 1.0625rem; line-height: 1.6; }
 .type-hero {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(3.4rem, 1.6rem + 7vw, 8.25rem);
-  line-height: 0.92;
+  font-size: clamp(2.6rem, 1.4rem + 4.4vw, 5.5rem);
+  line-height: 0.98;
   letter-spacing: -0.04em;
   text-wrap: balance;
 }
 .type-h2 {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(2.6rem, 1.5rem + 4.6vw, 5.75rem);
-  line-height: 0.96;
+  font-size: clamp(2.1rem, 1.3rem + 2.8vw, 3.75rem);
+  line-height: 1.02;
   letter-spacing: -0.035em;
   text-wrap: balance;
 }
 .type-h3 {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(1.4rem, 1.15rem + 0.8vw, 1.85rem);
+  font-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.55rem);
   line-height: 1.12;
   letter-spacing: -0.02em;
 }
 .type-lead {
-  font-size: clamp(1.15rem, 1rem + 0.55vw, 1.45rem);
+  font-size: clamp(1.08rem, 1rem + 0.35vw, 1.25rem);
   line-height: 1.5;
   color: var(--muted);
   max-width: 42ch;
@@ -85,7 +85,7 @@ body { font-size: 1.0625rem; line-height: 1.6; }
 .type-quote {
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: clamp(1.6rem, 1.1rem + 1.8vw, 2.75rem);
+  font-size: clamp(1.4rem, 1.1rem + 1.1vw, 2rem);
   line-height: 1.15;
   letter-spacing: -0.02em;
   text-wrap: balance;
