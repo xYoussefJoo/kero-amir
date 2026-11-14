@@ -112,7 +112,8 @@ dotnet ef database update -p apps/api/src/KeroAmir.Infrastructure -s apps/api/sr
 dotnet run --project apps/api/src/KeroAmir.Api
 
 # Web
-cd apps/web && npm run dev | npm run lint | npm run typecheck | npm run build
+cd apps/web && npm run dev | npm run lint | npm run typecheck | npm test | npm run build
+npm run api:generate     # regenerate lib/api/schema.d.ts from the running API (OPENAPI_URL to override)
 ```
 Local dev DB: the machine's SQL Server instance (`Server=.;Database=KeroAmir;Trusted_Connection=True;TrustServerCertificate=True`)
 or `docker compose up sqlserver`.

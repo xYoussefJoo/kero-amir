@@ -12,8 +12,9 @@ A Next.js public site and admin, backed by a .NET 10 Web API and SQL Server.
 | Phase | State |
 |---|---|
 | 1. Foundation | ✅ done |
-| 2. Auth + core API | ✅ API live; web login (part 4) next |
-| 3–8 | planned |
+| 2. Auth + core API | ✅ done (API live, admin sign-in via BFF) |
+| 3. Projects + media | next |
+| 4–8 | planned |
 
 ## Requirements
 
@@ -42,7 +43,7 @@ override it with `dotnet user-secrets set ConnectionStrings:Sql "<conn>" --proje
 
 ```bash
 cd apps/api && dotnet build KeroAmir.slnx && dotnet test --solution KeroAmir.slnx
-cd apps/web && npm run lint && npm run typecheck && npm run build
+cd apps/web && npm run lint && npm run typecheck && npm test && npm run build
 ```
 
 CI runs the same on every push (`.github/workflows/ci.yml`).

@@ -86,3 +86,12 @@ Newest at the bottom. Format: date, decision, why.
     (`Database:MigrateOnStartup`, kept on) and seeds during a first upload that carries the owner credentials; a second
     upload removes them within minutes. App pools are **32-bit**: publish `win-x86` (win-x64 fails with HTTP 500.32).
     Framework-dependent works (the host has .NET 10). Secrets are entered with `deploy/set-secrets.ps1`.
+40. **BFF implementation:** `/api/auth/{login,2fa,logout}` route handlers set httpOnly `ka_at` / `ka_rt` cookies
+    (SameSite=Lax, Secure in prod); the 2FA challenge also lives in an httpOnly cookie. `/api/bff/admin/...` forwards
+    only `admin/` paths with the Bearer token, refreshes once on 401, and checks `Origin` on writes (CSRF second layer).
+    `proxy.ts` guards `/admin` and refreshes an expired access token before render, since Server Components can't set
+    cookies. Concurrent refreshes of one token share a single call (in-memory; enough for one web instance).
+41. **Typed API client:** `openapi-typescript` generates `lib/api/schema.d.ts` from the API's OpenAPI document and
+    `openapi-fetch` (~6 KB) consumes it, so request/response types can't drift from the .NET contracts.
+42. **Sign-in rate limit is effectively shared** through the BFF (the API sees the web server's IP). Fine for a
+    single-owner admin; per-account lockout still applies.
