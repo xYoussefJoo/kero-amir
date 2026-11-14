@@ -59,6 +59,29 @@ export async function getCategories(locale: Locale): Promise<Category[]> {
   return load(() => api.GET("/api/v1/categories", { params: { query: { locale } } }), []);
 }
 
+export type ProjectCard = components["schemas"]["ProjectCardDto"];
+export type Testimonial = components["schemas"]["TestimonialDto"];
+
+/** Published projects for the grid (first page of 24; featured first). */
+export async function getProjects(locale: Locale): Promise<ProjectCard[]> {
+  "use cache";
+  cacheTag("projects");
+  cacheLife("hours");
+  const page = await load(
+    () => api.GET("/api/v1/projects", { params: { query: { locale, page: 1, pageSize: 24 } } }),
+    undefined,
+  );
+  return page?.items ?? [];
+}
+
+/** Approved reviews for the ticker. */
+export async function getTestimonials(): Promise<Testimonial[]> {
+  "use cache";
+  cacheTag("testimonials");
+  cacheLife("hours");
+  return load(() => api.GET("/api/v1/testimonials"), []);
+}
+
 /** Typed reads from the settings bag (values are JSON). */
 export const setting = {
   text: (s: Settings, key: string, fallback = ""): string => (typeof s[key] === "string" ? (s[key] as string) : fallback),

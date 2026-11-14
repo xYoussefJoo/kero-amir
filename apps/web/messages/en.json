@@ -9,7 +9,18 @@
     "switchTo": "Deutsch",
     "themeToLight": "Switch to light theme",
     "themeToDark": "Switch to dark theme",
-    "skipToContent": "Skip to content"
+    "skipToContent": "Skip to content",
+    "menu": "Open menu",
+    "closeMenu": "Close menu",
+    "navLabel": "Sections",
+    "nav": {
+      "about": "About",
+      "toolkit": "Toolkit",
+      "work": "Work",
+      "journey": "Journey",
+      "reviews": "Reviews",
+      "contact": "Contact"
+    }
   },
   "Home": {
     "label": "01 // INTRO",
@@ -46,14 +57,72 @@
   },
   "Work": {
     "label": "04 // SELECTED WORK",
-    "title": "Four disciplines, one system",
-    "intro": "Brand identity, packaging, campaigns and print. Case studies are being added.",
-    "soon": "Case studies soon"
+    "title": "Every piece, in context",
+    "intro": "Brand identities, packaging, campaigns and print. Filter by discipline.",
+    "all": "All work",
+    "empty": "No projects in this category yet."
   },
   "Contact": {
-    "label": "06 // CONTACT",
+    "label": "07 // CONTACT",
     "title": "Your project is the missing piece.",
     "intro": "Tell me about your brand, product or campaign, and let's make every piece fit.",
-    "cta": "Start a project"
+    "form": {
+      "name": "Name",
+      "email": "Email",
+      "company": "Company (optional)",
+      "service": "What do you need?",
+      "budget": "Budget",
+      "message": "Tell me about the project",
+      "choose": "Choose…",
+      "other": "Something else",
+      "submit": "Send message",
+      "sending": "Sending…",
+      "thanksTitle": "Your piece is in place.",
+      "thanks": "Thanks! Kero usually replies within two working days.",
+      "another": "Send another message",
+      "errors": {
+        "name": "Please enter your name.",
+        "email": "Please enter a valid email.",
+        "message": "Please write 20–3000 characters.",
+        "rateLimited": "Too many messages. Please try again in a few minutes.",
+        "unavailable": "Could not send right now. Please try again later."
+      }
+    },
+    "budgets": {
+      "under-1k": "Under $1,000",
+      "1k-3k": "$1,000–3,000",
+      "3k-10k": "$3,000–10,000",
+      "10k-plus": "$10,000+",
+      "not-sure": "Not sure yet"
+    }
+  },
+  "Reviews": {
+    "label": "06 // KIND WORDS",
+    "title": "What clients say",
+    "intro": "Reviews from real clients, published after a quick check.",
+    "empty": "No reviews yet. Worked with Kero? Be the first.",
+    "form": {
+      "open": "Leave a review",
+      "title": "Leave a review",
+      "intro": "It appears on the site after a quick check.",
+      "name": "Your name",
+      "role": "Role (optional)",
+      "company": "Company (optional)",
+      "country": "Country code (optional)",
+      "rating": "Rating",
+      "text": "Your review",
+      "submit": "Send review",
+      "sending": "Sending…",
+      "close": "Close",
+      "thanks": "Thank you! Your review will appear once it has been checked.",
+      "errors": {
+        "name": "Please enter your name.",
+        "text": "Please write 20–600 characters.",
+        "country": "Use two letters, e.g. DE.",
+        "rating": "Choose 1–5 stars.",
+        "rateLimited": "Too many submissions. Please try again in a few minutes.",
+        "unavailable": "Could not send right now. Please try again later."
+      }
+    }
   }
 }

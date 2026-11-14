@@ -102,6 +102,120 @@ html[data-logo="docked"] .logo-dock { animation: dock-pop 0.55s cubic-bezier(0.3
   100% { scale: 1; }
 }
 
+/* ---- Smart navbar (SmartNav sets data-hidden / data-scrolled / data-open and --progress).
+   No transform or backdrop-filter while the mobile menu is open: both would trap the fixed menu inside the header. */
+.smart-nav {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  width: 100%;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.3s, box-shadow 0.3s;
+}
+.smart-nav[data-hidden="true"]:not([data-open="true"]) { transform: translateY(-100%); }
+.smart-nav[data-scrolled="true"]:not([data-open="true"]) {
+  background: color-mix(in srgb, var(--bg) 78%, transparent);
+  backdrop-filter: blur(14px) saturate(1.4);
+  box-shadow: 0 10px 30px -22px color-mix(in srgb, var(--text) 60%, transparent);
+}
+.smart-nav__progress {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  transform-origin: left center;
+  transform: scaleX(var(--progress, 0));
+}
+[dir="rtl"] .smart-nav__progress { transform-origin: right center; }
+
+.smart-nav__links { display: flex; gap: 0.25rem; list-style: none; margin: 0; padding: 0; }
+.smart-nav__link {
+  position: relative;
+  display: inline-block;
+  border-radius: 9999px;
+  padding: 0.45rem 0.85rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--muted);
+  transition: color 0.2s, background-color 0.25s;
+}
+.smart-nav__link:hover { color: var(--text); }
+.smart-nav__link[aria-current="true"] {
+  color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+}
+.smart-nav__link[aria-current="true"]::after { /* a tiny puzzle knob under the active link */
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -5px;
+  width: 7px;
+  height: 7px;
+  translate: -50% 0;
+  border-radius: 9999px;
+  background: var(--accent);
+}
+
+.smart-nav__toggle {
+  position: absolute;
+  inset-inline-end: 1rem;
+  top: 1.75rem;
+  translate: 0 -50%;
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+}
+.smart-nav__burger,
+.smart-nav__burger::before,
+.smart-nav__burger::after {
+  display: block;
+  width: 18px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--text);
+  transition: transform 0.3s, background-color 0.2s;
+}
+.smart-nav__burger { position: relative; }
+.smart-nav__burger::before, .smart-nav__burger::after { content: ""; position: absolute; left: 0; }
+.smart-nav__burger::before { top: -6px; }
+.smart-nav__burger::after { top: 6px; }
+[data-open="true"] .smart-nav__burger { background: transparent; }
+[data-open="true"] .smart-nav__burger::before { transform: translateY(6px) rotate(45deg); }
+[data-open="true"] .smart-nav__burger::after { transform: translateY(-6px) rotate(-45deg); }
+
+@media (max-width: 1023px) {
+  /* Mobile: full-screen menu whose links snap in like puzzle pieces. */
+  .smart-nav__menu {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    display: grid;
+    place-items: center;
+    background: var(--bg);
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.25s, visibility 0.25s;
+  }
+  [data-open="true"] .smart-nav__menu { visibility: visible; opacity: 1; }
+  .smart-nav__links { flex-direction: column; align-items: center; gap: 0.75rem; }
+  .smart-nav__link { font-family: var(--font-display); font-size: 2rem; font-weight: 600; color: var(--text); }
+  .smart-nav__links li {
+    transform: translateY(24px) rotate(calc((var(--i) - 2.5) * 4deg));
+    opacity: 0;
+    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s;
+    transition-delay: calc(var(--i) * 0.05s);
+  }
+  [data-open="true"] .smart-nav__links li { transform: none; opacity: 1; }
+}
+@media (min-width: 1024px) {
+  .smart-nav__toggle { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .smart-nav, .smart-nav__links li { transition: none; }
+}
+
 /* ---- Section puzzle pattern (PuzzleAssemble). Assembled by default; scattered only once JS marks a section away. */
 .pz-piece {
   transition:
@@ -265,6 +379,154 @@ html[data-logo="docked"] .logo-dock { animation: dock-pop 0.55s cubic-bezier(0.3
 .work-tile { border-inline-start: 6px solid var(--tile, var(--primary)); }
 .work-tile--1 { --tile: var(--accent); }
 .work-tile--2 { --tile: var(--text); }
+
+/* ---- Projects: bento grid, filter chips, cards. */
+.project-chip {
+  border-radius: 9999px;
+  border: 1px solid color-mix(in srgb, var(--muted) 35%, transparent);
+  padding: 0.45rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, scale 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.project-chip:hover { border-color: var(--primary); color: var(--primary); }
+.project-chip[aria-pressed="true"] { background: var(--primary); border-color: var(--primary); color: var(--on-primary); scale: 1.04; }
+
+.project-grid { display: grid; gap: 1.75rem 1.25rem; list-style: none; margin: 0; padding: 0; }
+@media (min-width: 768px) { .project-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1024px) {
+  .project-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-flow: dense; }
+  .project-grid__featured { grid-column: span 2; grid-row: span 2; }
+}
+.project-snap { animation: project-snap 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both; animation-delay: calc(var(--i) * 0.06s); }
+@keyframes project-snap {
+  from { opacity: 0; transform: translateY(28px) rotate(calc((var(--i) - 2) * 1.5deg)) scale(0.94); }
+  to { opacity: 1; transform: none; }
+}
+
+.project-card { display: flex; height: 100%; flex-direction: column; overflow: visible; }
+.project-card__cover {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: 1.25rem 1.25rem 0 0;
+}
+.project-grid__featured .project-card__cover { aspect-ratio: auto; flex: 1; min-height: 16rem; }
+.project-grid__featured .project-card__body { flex: none; } /* the cover takes the extra height, not white space */
+.project-card__img, .project-cover { transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1); }
+.project-card:hover .project-card__img, .project-card:hover .project-cover { transform: scale(1.05); }
+.project-card__badge {
+  position: absolute;
+  inset-block-start: 0.9rem;
+  inset-inline-start: 0.9rem;
+  border-radius: 9999px;
+  background: var(--accent);
+  color: var(--on-accent);
+  padding: 0.3rem 0.75rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+.project-card__body { display: flex; flex: 1; flex-direction: column; gap: 0.5rem; padding: 1.25rem 1.4rem 1.4rem; }
+.project-card__summary {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.project-grid__featured .project-card__summary { -webkit-line-clamp: 4; }
+
+/* Branded cover (no image yet): the accent color, puzzle-knob shapes, the project's initials. */
+.project-cover {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(120% 90% at 85% 10%, color-mix(in srgb, var(--accent-c) 55%, white) 0%, transparent 60%),
+    var(--accent-c);
+}
+.project-cover__shapes { position: absolute; inset: 0; width: 100%; height: 100%; }
+.project-cover__shapes path, .project-cover__shapes circle { fill: color-mix(in srgb, white 16%, transparent); }
+.project-cover__initials {
+  position: relative;
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  color: color-mix(in srgb, white 92%, transparent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .project-snap { animation: none; }
+  .project-card__img, .project-cover { transition: none; }
+}
+
+/* ---- Reviews: two endless bands moving in opposite directions; pause on hover/focus. */
+.ticker {
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+}
+.ticker__track {
+  display: flex;
+  width: max-content;
+  gap: 1.25rem;
+  padding: 1.25rem 0.625rem;
+  list-style: none;
+  margin: 0;
+  animation: ticker var(--duration, 40s) linear infinite;
+}
+.ticker[data-reverse] .ticker__track { animation-direction: reverse; }
+.ticker:hover .ticker__track,
+.ticker:focus-within .ticker__track,
+[data-assembled="false"] .ticker__track { animation-play-state: paused; }
+@keyframes ticker { to { transform: translateX(-50%); } }
+.review-card {
+  display: flex;
+  width: 22rem;
+  min-height: 13rem;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.75rem 1.5rem 1.4rem;
+}
+
+/* ---- Forms (reviews dialog, contact). */
+.form-input {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--muted) 35%, transparent);
+  background: var(--bg);
+  padding: 0.65rem 0.85rem;
+  color: var(--text);
+  font-weight: 400;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.form-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent); }
+.hp-field { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.review-dialog {
+  width: min(36rem, calc(100vw - 2rem));
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  margin: auto;
+  border: 0;
+  padding: 2rem 1.75rem;
+  color: var(--text);
+}
+.review-dialog::before, .review-dialog::after { display: none; }
+.review-dialog::backdrop { background: color-mix(in srgb, var(--text) 45%, transparent); backdrop-filter: blur(4px); }
+.review-dialog[open] { animation: dialog-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1); }
+@keyframes dialog-in { from { opacity: 0; transform: translateY(24px) scale(0.96); } }
+
+/* Contact sent: the missing piece pops and glows once it has "arrived". */
+#contact[data-sent] .missing-piece__fill { animation: piece-celebrate 0.9s cubic-bezier(0.34, 1.56, 0.64, 1); }
+#contact[data-sent] .missing-piece__outline { stroke: var(--accent); stroke-dasharray: none; }
+@keyframes piece-celebrate {
+  0% { transform: translate(60%, -70%) rotate(28deg) scale(0.7); opacity: 0; }
+  60% { transform: scale(1.15); opacity: 1; }
+  100% { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ticker__track { animation: none; }
+  .review-dialog[open], #contact[data-sent] .missing-piece__fill { animation: none; }
+}
 
 /* ---- Contact: the missing piece snaps into its slot when the section arrives; bounces on hover. */
 .missing-piece__outline { fill: none; stroke: var(--muted); stroke-width: 2; stroke-dasharray: 6 6; opacity: 0.6; }

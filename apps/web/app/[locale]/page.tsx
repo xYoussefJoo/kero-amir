@@ -6,8 +6,9 @@ import { HeroLogo } from "@/components/hero/HeroLogo";
 import { AboutSection } from "@/components/sections/AboutSection";
 import { ToolkitSection } from "@/components/sections/ToolkitSection";
 import { JourneySection } from "@/components/sections/JourneySection";
-import { WorkSection } from "@/components/sections/WorkSection";
+import { ProjectsSection } from "@/components/sections/ProjectsSection";
 import { ContactSection } from "@/components/sections/ContactSection";
+import { ReviewsSection } from "@/components/sections/ReviewsSection";
 
 // Hero with the puzzle K. Texts move to CMS settings when the public site is built out (Phase 4).
 export default function HomePage({ params }: PageProps<"/[locale]">) {
@@ -46,8 +47,9 @@ export default function HomePage({ params }: PageProps<"/[locale]">) {
       </section>
       <AboutSection locale={locale as Locale} />
       <ToolkitSection locale={locale as Locale} />
-      <WorkSection locale={locale as Locale} />
+      <ProjectsSection locale={locale as Locale} />
       <JourneySection locale={locale as Locale} />
+      <ReviewsSection locale={locale as Locale} />
       <ContactSection locale={locale as Locale} />
     </>
   );

@@ -158,3 +158,13 @@ Newest at the bottom. Format: date, decision, why.
     demo projects and "Example" reviews, labelled as samples. Production never seeds them.
 59. Editing a category or tool also evicts the `projects` output cache (cards show their names); public cache keys
     vary by every query parameter (locale, filters, paging).
+60. **Smart navbar:** server-rendered links + one `SmartNav` client component that writes attributes/CSS variables
+    in a rAF-throttled scroll handler (hide on scroll down, show on scroll up, never while the hero K is flying to
+    the dock; glass state; reading-progress bar; active section via IntersectionObserver; mobile menu).
+61. **Projects grid:** bento layout (featured project spans 2×2), category chips filter client-side over server-
+    rendered cards (cards snap in on change), branded covers (accent color, puzzle shapes, initials) until real images.
+62. **Reviews ticker:** two CSS marquee bands in opposite directions (list rendered twice, copy aria-hidden), paused on
+    hover/focus and while off-screen; "Leave a review" opens a native `<dialog>` form.
+63. **Public forms go through `/api/forms/[form]`** (allow-list: testimonial, contact; same-origin check), which
+    forwards the visitor IP + `FORWARDING_SECRET` so the API rate-limits per visitor. Client zod schemas mirror the
+    API validators; the API stays the source of truth.

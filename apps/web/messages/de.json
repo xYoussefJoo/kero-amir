@@ -9,7 +9,18 @@
     "switchTo": "English",
     "themeToLight": "Zum hellen Design wechseln",
     "themeToDark": "Zum dunklen Design wechseln",
-    "skipToContent": "Zum Inhalt springen"
+    "skipToContent": "Zum Inhalt springen",
+    "menu": "Menü öffnen",
+    "closeMenu": "Menü schließen",
+    "navLabel": "Bereiche",
+    "nav": {
+      "about": "Über mich",
+      "toolkit": "Toolkit",
+      "work": "Arbeiten",
+      "journey": "Werdegang",
+      "reviews": "Stimmen",
+      "contact": "Kontakt"
+    }
   },
   "Home": {
     "label": "01 // INTRO",
@@ -46,14 +57,72 @@
   },
   "Work": {
     "label": "04 // AUSGEWÄHLTE ARBEITEN",
-    "title": "Vier Disziplinen, ein System",
-    "intro": "Markenidentität, Verpackung, Kampagnen und Print. Fallstudien folgen.",
-    "soon": "Fallstudien folgen"
+    "title": "Jedes Teil im Kontext",
+    "intro": "Markenidentitäten, Verpackung, Kampagnen und Print. Nach Disziplin filtern.",
+    "all": "Alle Arbeiten",
+    "empty": "Noch keine Projekte in dieser Kategorie."
   },
   "Contact": {
-    "label": "06 // KONTAKT",
+    "label": "07 // KONTAKT",
     "title": "Dein Projekt ist das fehlende Teil.",
     "intro": "Erzähl mir von deiner Marke, deinem Produkt oder deiner Kampagne, und lass uns jedes Teil passend machen.",
-    "cta": "Projekt starten"
+    "form": {
+      "name": "Name",
+      "email": "E-Mail",
+      "company": "Firma (optional)",
+      "service": "Was brauchst du?",
+      "budget": "Budget",
+      "message": "Erzähl mir vom Projekt",
+      "choose": "Auswählen…",
+      "other": "Etwas anderes",
+      "submit": "Nachricht senden",
+      "sending": "Wird gesendet…",
+      "thanksTitle": "Dein Teil ist an seinem Platz.",
+      "thanks": "Danke! Kero antwortet meist innerhalb von zwei Werktagen.",
+      "another": "Weitere Nachricht senden",
+      "errors": {
+        "name": "Bitte gib deinen Namen ein.",
+        "email": "Bitte gib eine gültige E-Mail ein.",
+        "message": "Bitte schreibe 20–3000 Zeichen.",
+        "rateLimited": "Zu viele Nachrichten. Bitte versuche es in ein paar Minuten erneut.",
+        "unavailable": "Senden gerade nicht möglich. Bitte später erneut versuchen."
+      }
+    },
+    "budgets": {
+      "under-1k": "Unter 1.000 $",
+      "1k-3k": "1.000–3.000 $",
+      "3k-10k": "3.000–10.000 $",
+      "10k-plus": "10.000 $+",
+      "not-sure": "Noch unklar"
+    }
+  },
+  "Reviews": {
+    "label": "06 // STIMMEN",
+    "title": "Was Kunden sagen",
+    "intro": "Bewertungen echter Kunden, veröffentlicht nach kurzer Prüfung.",
+    "empty": "Noch keine Bewertungen. Mit Kero gearbeitet? Sei die erste Stimme.",
+    "form": {
+      "open": "Bewertung schreiben",
+      "title": "Bewertung schreiben",
+      "intro": "Sie erscheint nach kurzer Prüfung auf der Seite.",
+      "name": "Dein Name",
+      "role": "Rolle (optional)",
+      "company": "Firma (optional)",
+      "country": "Ländercode (optional)",
+      "rating": "Bewertung",
+      "text": "Deine Bewertung",
+      "submit": "Bewertung senden",
+      "sending": "Wird gesendet…",
+      "close": "Schließen",
+      "thanks": "Danke! Deine Bewertung erscheint nach der Prüfung.",
+      "errors": {
+        "name": "Bitte gib deinen Namen ein.",
+        "text": "Bitte schreibe 20–600 Zeichen.",
+        "country": "Zwei Buchstaben, z. B. DE.",
+        "rating": "Wähle 1–5 Sterne.",
+        "rateLimited": "Zu viele Einsendungen. Bitte versuche es in ein paar Minuten erneut.",
+        "unavailable": "Senden gerade nicht möglich. Bitte später erneut versuchen."
+      }
+    }
   }
 }
