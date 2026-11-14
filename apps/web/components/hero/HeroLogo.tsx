@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { PuzzleLogo2D } from "./PuzzleLogo2D";
 import { POP_AT } from "./scatter";
 
@@ -33,6 +33,7 @@ function hasWebGL(): boolean {
 export function HeroLogo() {
   const [mode, setMode] = useState<Mode>("pending");
   const [threeReady, setThreeReady] = useState(false);
+  const box = useRef<HTMLDivElement>(null);
 
   // Runs after hydration: decide once, client-side only (no server/client mismatch).
   // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -40,9 +41,11 @@ export function HeroLogo() {
 
   return (
     <div
-      className="relative aspect-[1534/1856] w-full max-w-[22rem] lg:max-w-[26rem]"
+      ref={box}
+      className={`relative aspect-[1534/1856] w-full max-w-[22rem] lg:max-w-[26rem] ${mode === "3d" ? "cursor-pointer" : ""}`}
       data-play={mode === "2d" || threeReady ? "" : undefined}
       data-static={mode === "3d" ? "" : undefined}
+      title={mode === "3d" ? "Click me" : undefined}
       style={{ "--pop-at": `${POP_AT}s` } as CSSProperties}
     >
       <div aria-hidden className="hero-glow pointer-events-none absolute -inset-[20%] rounded-full" />
@@ -50,15 +53,12 @@ export function HeroLogo() {
       {/* 2D: plays on phones / weak devices; on 3D devices it is the still placeholder until WebGL is ready. */}
       <PuzzleLogo2D
         className={`absolute inset-0 h-full w-full transition-opacity duration-500 ${
-          mode === "pending" ? "opacity-0" : threeReady ? "opacity-0" : "opacity-100"
+          mode === "pending" || threeReady ? "opacity-0" : "opacity-100"
         }`}
       />
 
-      {mode === "3d" && (
-        <div className={`absolute -inset-[30%] transition-opacity duration-500 ${threeReady ? "opacity-100" : "opacity-0"}`}>
-          <PuzzleLogo3D onReady={() => setThreeReady(true)} />
-        </div>
-      )}
+      {/* 3D: a full-screen, click-through canvas that aligns the K to this box every frame. */}
+      {mode === "3d" && <PuzzleLogo3D anchor={box} onReady={() => setThreeReady(true)} />}
     </div>
   );
 }

@@ -107,3 +107,12 @@ Newest at the bottom. Format: date, decision, why.
     The 2D logo is the still placeholder until WebGL is ready, then cross-fades; the canvas stops rendering off-screen.
 45. **`flat` (no tone mapping)** in the canvas so brand colors render exactly; cream pieces turn ink in the light theme.
 46. `@react-three/drei` was removed again: nothing used it (performance-peak #11, unused dependencies).
+47. **Hero v2 (premium + cinematic + scroll + interactive):** the 3D K now renders on a full-screen, fixed,
+    click-through canvas aligned every frame to its hero box, so pieces can fly anywhere without clipping.
+    - Look: MeshPhysicalMaterial with clearcoat + procedural RoomEnvironment reflections (no HDR download,
+      `environmentIntensity` 0.45 so brand colors stay true) + orange rim light; no post-processing (cost).
+    - Motion: pieces swirl in from depth, each flashes orange as it snaps; the K pops with a small camera shake.
+    - Scroll: the K breaks apart as the hero scrolls away and reassembles on the way back (scrubbed, reversible).
+      Done with one scroll-derived value per frame, not GSAP, since nothing else needs a timeline yet.
+    - Interactive: pieces are pushed by the pointer (magnet) and spring back; a click bursts the K and it re-snaps.
+    - All effects drive per-piece damped springs; flashes are dated to landing times (frame-rate independent).
