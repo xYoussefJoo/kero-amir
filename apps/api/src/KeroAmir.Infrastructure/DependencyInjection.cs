@@ -1,3 +1,4 @@
+using KeroAmir.Application.Common.Abstractions;
 using KeroAmir.Infrastructure.Persistence;
 using KeroAmir.Infrastructure.Persistence.Interceptors;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,7 @@ public static class DependencyInjection
         services.AddDbContext<AppDbContext>((sp, options) => options
             .UseSqlServer(connectionString, sql => sql.EnableRetryOnFailure())
             .AddInterceptors(sp.GetRequiredService<AuditableEntityInterceptor>()));
+        services.AddScoped<IAppDbContext>(sp => sp.GetRequiredService<AppDbContext>());
 
         return services;
     }

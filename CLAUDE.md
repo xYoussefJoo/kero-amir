@@ -77,6 +77,31 @@ Brand: cream `#F4F0E7`, blue `#2546EB`, orange `#FF6535`. Themes via `data-theme
 - Every public form: Turnstile + honeypot + rate limit. Never render visitor HTML.
 - 3D, GSAP and the custom cursor load only on desktop with ≥ 6 cores and no reduced motion; `?3d` forces on.
 
+## Clean Architecture rules
+- Dependencies point inward only: Api → Infrastructure → Application → Domain. Domain references nothing.
+- **Domain:** entities, value rules, enums. No EF attributes, no DTOs.
+- **Application:** one folder per feature (`Features/Categories/...`) with commands/queries, handlers, DTOs and
+  FluentValidation validators. Talks to data through `IAppDbContext`; to the outside world through interfaces
+  (`IFileStorage`, `IEmailSender`, `ITokenService`, ...). Returns `Result<T>`, never throws for expected failures.
+- **Infrastructure:** implements those interfaces (EF Core, Identity, R2, Resend, Cloudflare).
+- **Api:** thin endpoints: bind → call handler → map `Result` to HTTP (ProblemDetails on failure). No business logic.
+- No MediatR (commercial licence now): handlers are plain classes registered in DI and injected into endpoints.
+
+## Performance standards (from the performance-peak checklist; apply only what fits)
+- **API reads:** `AsNoTracking`, project to DTOs with `Select` (required columns only), page-based pagination on every list
+  (max page size 100), no N+1 (projection or explicit `Include`), indexes for every WHERE / ORDER BY used.
+- **Caching:** public reads use ASP.NET Core output caching with tags, evicted on write; the web uses `"use cache"` +
+  `cacheTag` and `/api/revalidate`. No Redis unless measurements demand it.
+- **Outbound calls:** `HttpClient` via `IHttpClientFactory` with timeouts and retry/backoff (standard resilience handler).
+- **Slow work off the request path:** emails, image processing and webhooks go through a background queue (`Channel<T>` + hosted service).
+- **Responses:** Brotli/Gzip response compression; long immutable cache headers for hashed assets.
+- **Web:** Server Components + static generation by default; code-split heavy client code (`next/dynamic`); `next/image`
+  with AVIF/WebP + explicit sizes; skeletons that match final layout; TanStack Query for dedupe + optimistic updates in the
+  admin; debounce search and autosave; no unbounded lists (virtualize if hundreds of rows).
+- **Observability:** OpenTelemetry traces (HTTP → handler → SQL) in the API; Vercel Analytics for real-user vitals;
+  Lighthouse budgets in CI from Phase 4.
+- Measure before claiming a gain. If a change shows no measurable benefit, don't keep it.
+
 ## Commands
 ```
 # API

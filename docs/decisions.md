@@ -29,3 +29,20 @@ Newest at the bottom. Format: date, decision, why.
     `TreatWarningsAsErrors` is on, generated EF migrations are excluded from analyzers.
 13. **xUnit v3 on Microsoft.Testing.Platform** (`global.json` → `test.runner`), required by `dotnet test` on .NET 10.
 14. **IDs are `Guid.CreateVersion7()`**: sortable by creation time, so SQL Server indexes don't fragment.
+
+## Phase 2 (2026-11-14)
+
+15. **Clean Architecture + performance-peak techniques are standing rules** (see CLAUDE.md sections). Every part
+    states which techniques it applies.
+16. **No MediatR.** Handlers implement `IHandler<TRequest, TResponse>`, are registered by assembly scan and injected
+    into endpoints. Less magic, no licence, same separation.
+17. **`Result<T>` instead of exceptions** for expected failures; the Api maps `ErrorType` to status codes + ProblemDetails.
+    CA1716/CA1000 are off: they flag this pattern, not real problems.
+18. **Application references EF Core's query API** (not the SQL Server provider) through `IAppDbContext`. Pragmatic
+    Clean Architecture: handlers write LINQ projections directly instead of hiding EF behind generic repositories,
+    which would block `Select` projections and split queries.
+19. **Translations are owned collections** (`OwnsMany`), key `(ParentId, Locale)`, cascade-deleted with the parent.
+    The key is also the lookup index, so no extra indexes needed.
+20. **Indexes kept minimal:** unique slugs (filtered on live rows) and FK indexes. Catalog/skills/timeline tables hold
+    tens of rows; sort-order indexes would be over-indexing.
+21. **Skill level is guarded in the database** (`CHECK Level BETWEEN 0 AND 100`) as well as in validation.

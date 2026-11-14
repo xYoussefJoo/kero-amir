@@ -1,9 +1,25 @@
+using FluentValidation;
+using KeroAmir.Application.Common.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace KeroAmir.Application;
 
 public static class DependencyInjection
 {
-    // Use cases and validators are registered here from Phase 2.
-    public static IServiceCollection AddApplication(this IServiceCollection services) => services;
+    public static IServiceCollection AddApplication(this IServiceCollection services)
+    {
+        var assembly = typeof(DependencyInjection).Assembly;
+
+        // Every IHandler<,> implementation, registered by its interface.
+        var handlers = assembly.GetTypes()
+            .Where(t => t is { IsClass: true, IsAbstract: false })
+            .SelectMany(t => t.GetInterfaces()
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHandler<,>))
+                .Select(i => (Service: i, Implementation: t)));
+        foreach (var (service, implementation) in handlers)
+            services.AddScoped(service, implementation);
+
+        services.AddValidatorsFromAssembly(assembly, includeInternalTypes: true);
+        return services;
+    }
 }
