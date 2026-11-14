@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using KeroAmir.Application.Common.Paging;
 using KeroAmir.Application.Features.Categories;
+using KeroAmir.Application.Features.Dashboard;
 using KeroAmir.Application.Features.Engagement;
 using KeroAmir.Application.Features.Projects;
 using KeroAmir.Domain.Engagement;
@@ -146,5 +147,20 @@ public class ProjectAndEngagementTests(ApiFixture api)
         var anonymous = api.CreateClient();
         Assert.Equal(HttpStatusCode.Unauthorized, (await anonymous.GetAsync("/api/v1/admin/messages", Ct)).StatusCode);
         Assert.Equal(HttpStatusCode.Unauthorized, (await anonymous.GetAsync("/api/v1/admin/testimonials", Ct)).StatusCode);
+    }
+
+    [Fact]
+    public async Task Dashboard_overview_counts_drafts_and_needs_the_owner()
+    {
+        Assert.Equal(HttpStatusCode.Unauthorized, (await api.CreateClient().GetAsync("/api/v1/admin/overview", Ct)).StatusCode);
+
+        var owner = await api.CreateOwnerClientAsync(Ct);
+        var before = (await owner.GetFromJsonAsync<DashboardOverview>("/api/v1/admin/overview", Json, Ct))!;
+        await CreateDraftProject();
+        var after = (await owner.GetFromJsonAsync<DashboardOverview>("/api/v1/admin/overview", Json, Ct))!;
+
+        Assert.Equal(before.Projects.Drafts + 1, after.Projects.Drafts);
+        Assert.True(after.Inbox.Total >= after.Inbox.New);
+        Assert.All(after.LatestMessages, m => Assert.True(m.Excerpt.Length <= 141));
     }
 }

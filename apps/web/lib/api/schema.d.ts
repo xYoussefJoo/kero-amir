@@ -166,6 +166,41 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/overview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["DashboardOverview"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/settings": {
         parameters: {
             query?: never;
@@ -2625,6 +2660,24 @@ export interface components {
             /** Format: date-time */
             createdAt: string;
         };
+        ContentCounts: {
+            /** Format: int32 */
+            categories: number | string;
+            /** Format: int32 */
+            tools: number | string;
+            /** Format: int32 */
+            skills: number | string;
+            /** Format: int32 */
+            timelineEntries: number | string;
+        };
+        DashboardOverview: {
+            projects: components["schemas"]["ProjectCounts"];
+            reviews: components["schemas"]["ReviewCounts"];
+            inbox: components["schemas"]["InboxCounts"];
+            content: components["schemas"]["ContentCounts"];
+            latestMessages: components["schemas"]["MessagePreview"][];
+            pendingReviews: components["schemas"]["ReviewPreview"][];
+        };
         HttpValidationProblemDetails: {
             type?: null | string;
             title?: null | string;
@@ -2635,6 +2688,12 @@ export interface components {
             errors?: {
                 [key: string]: string[];
             };
+        };
+        InboxCounts: {
+            /** Format: int32 */
+            new: number | string;
+            /** Format: int32 */
+            total: number | string;
         };
         /** @enum {unknown} */
         InboxStatus: "New" | "Read" | "Replied" | "Archived";
@@ -2660,6 +2719,15 @@ export interface components {
             email: string;
             roles: string[];
             twoFactorEnabled: boolean;
+        };
+        MessagePreview: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+            service: null | string;
+            excerpt: string;
+            /** Format: date-time */
+            createdAt: string;
         };
         ModerationBody: {
             status: components["schemas"]["ModerationStatus"];
@@ -2804,6 +2872,12 @@ export interface components {
             categories: components["schemas"]["TagDto"][];
             tools: components["schemas"]["TagDto"][];
         };
+        ProjectCounts: {
+            /** Format: int32 */
+            published: number | string;
+            /** Format: int32 */
+            drafts: number | string;
+        };
         ProjectInput: {
             slug: string;
             /** Format: int32 */
@@ -2832,6 +2906,24 @@ export interface components {
         };
         ReorderRequest: {
             ids: string[];
+        };
+        ReviewCounts: {
+            /** Format: int32 */
+            pending: number | string;
+            /** Format: int32 */
+            approved: number | string;
+            /** Format: int32 */
+            rejected: number | string;
+        };
+        ReviewPreview: {
+            /** Format: uuid */
+            id: string;
+            authorName: string;
+            /** Format: int32 */
+            rating: number | string;
+            excerpt: string;
+            /** Format: date-time */
+            createdAt: string;
         };
         SettingAdminDto: {
             key: string;

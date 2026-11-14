@@ -65,6 +65,7 @@ var admin = v1.MapGroup("/admin").RequireAuthorization(AuthSetup.OwnerPolicy);
 v1.MapHealthEndpoints();
 v1.MapAuthEndpoints();
 admin.MapAccountEndpoints();
+admin.MapDashboardEndpoints();
 v1.MapSettingEndpoints(admin);
 v1.MapCategoryEndpoints(admin);
 v1.MapToolEndpoints(admin);
