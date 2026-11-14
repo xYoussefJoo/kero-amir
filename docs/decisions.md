@@ -81,3 +81,8 @@ Newest at the bottom. Format: date, decision, why.
     the dev machine against the production database, so the owner password never lives on the server; only the
     connection string and JWT key go into the server's `web.config` (environment variables). Secrets sit in the
     git-ignored `deploy/production.secrets.json`. Publish targets `win-x64` only (21 MB instead of 82 MB).
+39. **MonsterASP specifics (found while deploying, 2026-11-14):** the database hostname is internal-only (resolves to
+    10.0.0.x) and remote access isn't available, so `-ServerSideDatabase` mode is used: the API migrates on startup
+    (`Database:MigrateOnStartup`, kept on) and seeds during a first upload that carries the owner credentials; a second
+    upload removes them within minutes. App pools are **32-bit**: publish `win-x86` (win-x64 fails with HTTP 500.32).
+    Framework-dependent works (the host has .NET 10). Secrets are entered with `deploy/set-secrets.ps1`.

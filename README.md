@@ -12,7 +12,7 @@ A Next.js public site and admin, backed by a .NET 10 Web API and SQL Server.
 | Phase | State |
 |---|---|
 | 1. Foundation | ✅ done |
-| 2. Auth + core API | next |
+| 2. Auth + core API | ✅ API live; web login (part 4) next |
 | 3–8 | planned |
 
 ## Requirements
@@ -46,6 +46,20 @@ cd apps/web && npm run lint && npm run typecheck && npm run build
 ```
 
 CI runs the same on every push (`.github/workflows/ci.yml`).
+
+## Deploy (MonsterASP.NET)
+
+Live API: https://kero-amir.runasp.net/api/v1/health/ready
+
+```powershell
+# once: enter secrets (hidden prompts), saved to git-ignored deploy/production.secrets.json
+powershell -ExecutionPolicy Bypass -File .deployset-secrets.ps1
+
+# every deploy (migrations run on the server at startup)
+./deploy/deploy.ps1 -PublishSettings "<path>.publishSettings" -ServerSideDatabase -SkipSeed
+```
+
+First deploy: drop `-SkipSeed` to create the owner account and seed content. Troubleshooting: add `-StdoutLog`.
 
 ## Layout
 

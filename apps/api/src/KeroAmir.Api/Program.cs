@@ -5,6 +5,7 @@ using KeroAmir.Api.Infrastructure;
 using KeroAmir.Application;
 using KeroAmir.Infrastructure;
 using KeroAmir.Infrastructure.Identity;
+using KeroAmir.Infrastructure.Persistence;
 using KeroAmir.Infrastructure.Seeding;
 using Microsoft.AspNetCore.ResponseCompression;
 
@@ -50,6 +51,7 @@ v1.MapToolEndpoints(admin);
 v1.MapSkillEndpoints(admin);
 v1.MapTimelineEndpoints(admin);
 
+await app.Services.MigrateDatabaseAsync(app.Configuration);
 await app.Services.SeedOwnerAsync(app.Configuration);
 await app.Services.SeedContentAsync(app.Configuration);
 
