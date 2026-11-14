@@ -13,12 +13,14 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^7.0.6",
+    "@react-three/fiber": "^9.8.2",
     "next": "16.4.6",
     "next-intl": "^4.15.1",
     "openapi-fetch": "^0.17.0",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-hook-form": "^7.92.0",
+    "three": "^0.187.0",
     "zod": "^4.6.7"
   },
   "devDependencies": {
@@ -26,6 +28,7 @@
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/three": "^0.187.0",
     "eslint": "^9",
     "eslint-config-next": "16.4.6",
     "openapi-typescript": "^7.13.0",

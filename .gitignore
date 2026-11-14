@@ -34,3 +34,6 @@ Thumbs.db
 # Deploy: local secrets and publish output
 deploy/production.secrets.json
 deploy/out/
+
+# Logo tools: local-only deps
+design/brand/tools/node_modules/

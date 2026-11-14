@@ -95,3 +95,15 @@ Newest at the bottom. Format: date, decision, why.
     `openapi-fetch` (~6 KB) consumes it, so request/response types can't drift from the .NET contracts.
 42. **Sign-in rate limit is effectively shared** through the BFF (the API sees the web server's IP). Fine for a
     single-owner admin; per-account lockout still applies.
+
+## Hero puzzle logo (2026-11-14, pulled forward from Phase 4)
+
+43. **The K is built from its own puzzle pieces:** Kero's PNG is traced (potrace, per color) and split into 14 pieces
+    (`logo-pieces.ts`). Pieces fly in staggered, snap with a back-out ease, then the whole K pops out with a damped
+    spring and an orange glow; afterwards it floats and tilts toward the pointer.
+44. **Two renderers, one data source:** `PuzzleLogo2D` (SVG + CSS, zero JS) for phones, weak devices and reduced motion;
+    `PuzzleLogo3D` (React Three Fiber, extruded + bevelled pieces) only on desktops with ≥ 6 cores, ≥ 4 GB and WebGL2,
+    loaded with `next/dynamic` so three.js is never downloaded elsewhere. `?3d` / `?2d` force a mode.
+    The 2D logo is the still placeholder until WebGL is ready, then cross-fades; the canvas stops rendering off-screen.
+45. **`flat` (no tone mapping)** in the canvas so brand colors render exactly; cream pieces turn ink in the light theme.
+46. `@react-three/drei` was removed again: nothing used it (performance-peak #11, unused dependencies).
