@@ -5,6 +5,7 @@ using KeroAmir.Api.Infrastructure;
 using KeroAmir.Application;
 using KeroAmir.Infrastructure;
 using KeroAmir.Infrastructure.Identity;
+using KeroAmir.Infrastructure.Seeding;
 using Microsoft.AspNetCore.ResponseCompression;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -50,6 +51,7 @@ v1.MapSkillEndpoints(admin);
 v1.MapTimelineEndpoints(admin);
 
 await app.Services.SeedOwnerAsync(app.Configuration);
+await app.Services.SeedContentAsync(app.Configuration);
 await app.RunAsync();
 
 // Exposed for WebApplicationFactory in the tests.

@@ -73,3 +73,7 @@ Newest at the bottom. Format: date, decision, why.
 35. **Enums travel as strings** in JSON (`"Work"`, not `0`) so the API is readable and stable if enum order changes.
 36. **Response compression (Brotli/Gzip) on HTTPS**: BREACH needs attacker-reflected input next to a secret in one
     body; token responses reflect none.
+37. **Initial content is an embedded `content-seed.json`** (from Kero's previous site, 2026-11-14), applied at startup
+    when `Seed:Content=true`, table by table, only while a table is empty, so it never overwrites admin edits.
+    Skill levels and German texts are drafts (the old site had neither); Kero reviews them in the admin.
+    Placeholder social links and "Example" testimonials from the old site were deliberately not imported.

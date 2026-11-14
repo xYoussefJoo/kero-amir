@@ -1,0 +1,114 @@
+{
+  "$comment": "Initial content, taken from Kero's previous site (portfolio-taupe-beta-48.vercel.app) on 2026-11-14. German texts are drafts for Kero to review. Applied only to empty tables.",
+  "settings": [
+    { "key": "hero.eyebrow", "locale": "en", "value": "Senior Graphic Designer & Visual Artist" },
+    { "key": "hero.eyebrow", "locale": "de", "value": "Senior Grafikdesigner & visueller Künstler" },
+    { "key": "hero.name", "locale": null, "value": "Kerollos Amir" },
+    { "key": "hero.headline", "locale": "en", "value": "Visual Identities & 3D Experiences" },
+    { "key": "hero.headline", "locale": "de", "value": "Visuelle Identitäten & 3D-Erlebnisse" },
+    { "key": "hero.subheadline", "locale": "en", "value": "Over 3 years turning complex brand visions into visual experiences across the US, Germany, France and Egypt." },
+    { "key": "hero.subheadline", "locale": "de", "value": "Seit über 3 Jahren verwandle ich komplexe Markenvisionen in visuelle Erlebnisse – in den USA, Deutschland, Frankreich und Ägypten." },
+    { "key": "heroStats", "locale": null, "value": { "years": 3, "projects": 200, "countries": 4, "satisfaction": 100 } },
+    { "key": "about.title", "locale": "en", "value": "Transforming Ideas into Unforgettable Aesthetics" },
+    { "key": "about.title", "locale": "de", "value": "Ideen in unvergessliche Ästhetik verwandeln" },
+    { "key": "about.intro", "locale": "en", "value": "With a deep mastery of graphic design, brand strategy and visual arts, I help global brands stand out." },
+    { "key": "about.intro", "locale": "de", "value": "Mit fundierter Erfahrung in Grafikdesign, Markenstrategie und visueller Kunst helfe ich globalen Marken, sich abzuheben." },
+    { "key": "about.philosophy", "locale": "en", "value": "Design is not just what it looks like and feels like. Design is how it communicates, resonates, and moves people to action." },
+    { "key": "about.philosophy", "locale": "de", "value": "Design ist nicht nur, wie es aussieht und sich anfühlt. Design ist, wie es kommuniziert, nachwirkt und Menschen zum Handeln bewegt." },
+    { "key": "about.capabilities", "locale": "en", "value": [
+      "Multilingual client communication (English & German)",
+      "Master-level Adobe CC craftsmanship",
+      "200+ delivered brand assets",
+      "Cross-cultural visual localization",
+      "Fast turnaround & print-ready standards"
+    ] },
+    { "key": "about.capabilities", "locale": "de", "value": [
+      "Mehrsprachige Kundenkommunikation (Englisch & Deutsch)",
+      "Adobe-CC-Handwerk auf Meisterniveau",
+      "Über 200 gelieferte Marken-Assets",
+      "Interkulturelle visuelle Lokalisierung",
+      "Schnelle Umsetzung & druckfertige Standards"
+    ] },
+    { "key": "availability", "locale": null, "value": { "status": "available", "bookedUntil": null } },
+    { "key": "countries", "locale": null, "value": ["US", "DE", "FR", "EG"] },
+    { "key": "spokenLanguages", "locale": null, "value": ["en", "de", "fr", "ar"] },
+    { "key": "socials", "locale": null, "value": { "behance": null, "instagram": null, "linkedin": null, "dribbble": null } }
+  ],
+  "categories": [
+    { "slug": "brand-identity", "en": "Brand Identity", "de": "Markenidentität" },
+    { "slug": "packaging-3d", "en": "Packaging & 3D", "de": "Verpackung & 3D" },
+    { "slug": "ad-campaigns", "en": "Ad Campaigns", "de": "Werbekampagnen" },
+    { "slug": "editorial-print", "en": "Editorial & Print", "de": "Editorial & Print" }
+  ],
+  "tools": [
+    { "slug": "photoshop", "name": "Adobe Photoshop", "color": "#31A8FF", "showInOrbit": true },
+    { "slug": "illustrator", "name": "Adobe Illustrator", "color": "#FF9A00", "showInOrbit": true },
+    { "slug": "indesign", "name": "Adobe InDesign", "color": "#FF3366", "showInOrbit": true },
+    { "slug": "after-effects", "name": "Adobe After Effects", "color": "#9999FF", "showInOrbit": true },
+    { "slug": "premiere-pro", "name": "Adobe Premiere Pro", "color": "#EA77FF", "showInOrbit": true },
+    { "slug": "xd", "name": "Adobe XD", "color": "#FF61F6", "showInOrbit": false },
+    { "slug": "lightroom", "name": "Adobe Lightroom", "color": "#31A8FF", "showInOrbit": false },
+    { "slug": "dimension", "name": "Adobe Dimension", "color": null, "showInOrbit": true }
+  ],
+  "skillGroups": [
+    {
+      "en": "Adobe Creative Cloud", "de": "Adobe Creative Cloud",
+      "skills": [
+        { "en": "Photoshop", "de": "Photoshop", "level": 95, "tool": "photoshop" },
+        { "en": "Illustrator", "de": "Illustrator", "level": 95, "tool": "illustrator" },
+        { "en": "InDesign", "de": "InDesign", "level": 90, "tool": "indesign" },
+        { "en": "After Effects", "de": "After Effects", "level": 85, "tool": "after-effects" },
+        { "en": "Premiere Pro", "de": "Premiere Pro", "level": 80, "tool": "premiere-pro" },
+        { "en": "XD", "de": "XD", "level": 80, "tool": "xd" },
+        { "en": "Lightroom", "de": "Lightroom", "level": 85, "tool": "lightroom" },
+        { "en": "Dimension (3D)", "de": "Dimension (3D)", "level": 85, "tool": "dimension" }
+      ]
+    },
+    {
+      "en": "Brand Identity & Art Direction", "de": "Markenidentität & Art Direction",
+      "skills": [
+        { "en": "Brand identity systems", "de": "Markenidentitätssysteme", "level": 95 },
+        { "en": "Vector logo design", "de": "Vektor-Logodesign", "level": 95 },
+        { "en": "Typography & lettering", "de": "Typografie & Lettering", "level": 90 },
+        { "en": "Color theory & palettes", "de": "Farbtheorie & Paletten", "level": 90 },
+        { "en": "Packaging & label design", "de": "Verpackungs- & Etikettendesign", "level": 90 },
+        { "en": "Print prepress (CMYK/Pantone)", "de": "Druckvorstufe (CMYK/Pantone)", "level": 90 },
+        { "en": "Brand style guides", "de": "Marken-Styleguides", "level": 90 },
+        { "en": "Billboard & large format", "de": "Plakat & Großformat", "level": 85 }
+      ]
+    },
+    {
+      "en": "Motion & Digital Art Direction", "de": "Motion & digitale Art Direction",
+      "skills": [
+        { "en": "Motion graphics & intros", "de": "Motion Graphics & Intros", "level": 85, "tool": "after-effects" },
+        { "en": "Kinetic typography", "de": "Kinetische Typografie", "level": 85, "tool": "after-effects" },
+        { "en": "Social media ad campaigns", "de": "Social-Media-Werbekampagnen", "level": 90 },
+        { "en": "Photorealistic 3D mockups", "de": "Fotorealistische 3D-Mockups", "level": 85, "tool": "dimension" },
+        { "en": "Photo manipulation & retouching", "de": "Bildbearbeitung & Retusche", "level": 90, "tool": "photoshop" },
+        { "en": "Vector illustration", "de": "Vektorillustration", "level": 90, "tool": "illustrator" },
+        { "en": "Magazine & editorial layouts", "de": "Magazin- & Editorial-Layouts", "level": 85, "tool": "indesign" },
+        { "en": "Digital marketing visuals", "de": "Visuals für digitales Marketing", "level": 90 }
+      ]
+    }
+  ],
+  "timeline": [
+    {
+      "kind": "Work", "start": "2025-01-01", "end": null,
+      "organization": "International Creative Studio", "location": "Berlin, Germany / Paris, France",
+      "en": { "title": "Senior Graphic Designer & Brand Consultant", "description": "Visual identity systems, multilingual European packaging and luxury brand assets for high-growth startups and heritage brands across Germany and France. Passed 200 completed projects with 5-star client feedback." },
+      "de": { "title": "Senior Grafikdesigner & Markenberater", "description": "Visuelle Identitätssysteme, mehrsprachige europäische Verpackungen und Luxus-Markenassets für wachstumsstarke Start-ups und Traditionsmarken in Deutschland und Frankreich. Über 200 abgeschlossene Projekte mit 5-Sterne-Kundenfeedback." }
+    },
+    {
+      "kind": "Work", "start": "2024-01-01", "end": "2024-12-31",
+      "organization": "Global Digital Agency & Freelance", "location": "United States / Egypt",
+      "en": { "title": "Lead Visual Designer & Adobe CC Specialist", "description": "120+ branding systems, packaging mockups and advertising campaigns for tech and consumer brands across the US and MENA, with motion assets in After Effects." },
+      "de": { "title": "Lead Visual Designer & Adobe-CC-Spezialist", "description": "Über 120 Branding-Systeme, Verpackungs-Mockups und Werbekampagnen für Tech- und Konsumgütermarken in den USA und der MENA-Region, mit Motion-Assets in After Effects." }
+    },
+    {
+      "kind": "Work", "start": "2023-01-01", "end": "2023-12-31",
+      "organization": "Creative Studio & Independent Practice", "location": "United States / Egypt",
+      "en": { "title": "Graphic & Brand Identity Designer", "description": "Built the core design practice: 50+ vector identities, corporate collateral and editorial layouts, with fast workflows in Illustrator and InDesign." },
+      "de": { "title": "Grafik- & Markenidentitätsdesigner", "description": "Aufbau der eigenen Designpraxis: über 50 Vektor-Identitäten, Geschäftsausstattungen und Editorial-Layouts mit schnellen Workflows in Illustrator und InDesign." }
+    }
+  ]
+}

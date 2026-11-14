@@ -33,14 +33,28 @@ public sealed class ApiFixture : WebApplicationFactory<Program>, IAsyncLifetime
             server = _container.GetConnectionString();
         }
 
-        _connectionString = new SqlConnectionStringBuilder(server)
+        _server = server;
+        _connectionString = await CreateDatabaseAsync();
+    }
+
+    private string _server = "";
+    private readonly List<string> _extraDatabases = [];
+
+    /// <summary>A new, migrated, empty database on the same server. Dropped when the fixture is disposed.</summary>
+    public async Task<string> CreateDatabaseAsync()
+    {
+        var connectionString = new SqlConnectionStringBuilder(_server)
         {
             InitialCatalog = $"KeroAmir_Tests_{Guid.NewGuid():N}",
         }.ConnectionString;
 
         await using var db = new AppDbContext(new DbContextOptionsBuilder<AppDbContext>()
-            .UseSqlServer(_connectionString).Options);
+            .UseSqlServer(connectionString).Options);
         await db.Database.MigrateAsync();
+
+        if (_connectionString.Length > 0)
+            _extraDatabases.Add(connectionString);
+        return connectionString;
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -74,10 +88,13 @@ public sealed class ApiFixture : WebApplicationFactory<Program>, IAsyncLifetime
             return;
         }
 
-        // Local instance: drop the throwaway database.
-        await using var db = new AppDbContext(new DbContextOptionsBuilder<AppDbContext>()
-            .UseSqlServer(_connectionString).Options);
-        await db.Database.EnsureDeletedAsync();
+        // Local instance: drop the throwaway databases.
+        foreach (var connectionString in _extraDatabases.Append(_connectionString))
+        {
+            await using var db = new AppDbContext(new DbContextOptionsBuilder<AppDbContext>()
+                .UseSqlServer(connectionString).Options);
+            await db.Database.EnsureDeletedAsync();
+        }
     }
 }
 
