@@ -3,7 +3,7 @@ using KeroAmir.Domain.Common;
 namespace KeroAmir.Domain.Catalog;
 
 /// <summary>A kind of work, e.g. Branding, Packaging, 3D, Motion. Used to filter projects.</summary>
-public class Category : BaseEntity, ITranslatable<CategoryTranslation>
+public class Category : BaseEntity, ITranslatable<CategoryTranslation>, ISortable
 {
     public required string Slug { get; set; }
     public int SortOrder { get; set; }

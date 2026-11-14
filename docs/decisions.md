@@ -61,3 +61,15 @@ Newest at the bottom. Format: date, decision, why.
 28. **Integration tests hit real SQL Server**: `KEROAMIR_TEST_SQL_SERVER` (local instance) or Testcontainers in CI;
     one throwaway database per run.
 29. **Hosting target: MonsterASP.NET (runasp.net) via WebDeploy** for the API. `*.publishSettings` is git-ignored.
+30. **Public content reads use ASP.NET Core output caching** (in-memory, 1 h, varies by `?locale`, one tag per feature).
+    Admin writes evict their tags in an endpoint filter after a 2xx, so edits show on the next read. Tool changes also
+    evict `skills` (skills show tool slugs). No Redis: single API instance on MonsterASP.
+31. **Public lists return the whole set, capped at 200** (categories, tools, skill groups, timeline are tens of rows and
+    the site shows them all); admin lists are paged (max 100). Settings capped at 500 rows.
+32. **Settings are JSON values under dotted keys** (`hero.headline`, `heroStats`); a row with no locale is shared and a
+    locale row overrides it. Lets Kero edit structured data (stats, socials) without a schema change per field.
+33. **Skill groups with skills can't be deleted** (409); deleted tools just disappear from their skills.
+34. **Timeline is ordered by date** (newest first), not drag order; `SortOrder` only breaks same-date ties.
+35. **Enums travel as strings** in JSON (`"Work"`, not `0`) so the API is readable and stable if enum order changes.
+36. **Response compression (Brotli/Gzip) on HTTPS**: BREACH needs attacker-reflected input next to a secret in one
+    body; token responses reflect none.

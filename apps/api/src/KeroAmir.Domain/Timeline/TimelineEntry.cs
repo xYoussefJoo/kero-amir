@@ -11,7 +11,7 @@ public enum TimelineKind
 }
 
 /// <summary>A step in Kero's journey. <see cref="EndDate"/> null means "present".</summary>
-public class TimelineEntry : BaseEntity, ITranslatable<TimelineEntryTranslation>
+public class TimelineEntry : BaseEntity, ITranslatable<TimelineEntryTranslation>, ISortable
 {
     public TimelineKind Kind { get; set; }
     public DateOnly StartDate { get; set; }

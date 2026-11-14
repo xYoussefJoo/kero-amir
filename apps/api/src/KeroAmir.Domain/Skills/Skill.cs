@@ -4,7 +4,7 @@ using KeroAmir.Domain.Common;
 namespace KeroAmir.Domain.Skills;
 
 /// <summary>A group of skills, e.g. "Brand identity" or "3D & motion".</summary>
-public class SkillGroup : BaseEntity, ITranslatable<SkillGroupTranslation>
+public class SkillGroup : BaseEntity, ITranslatable<SkillGroupTranslation>, ISortable
 {
     public int SortOrder { get; set; }
     public ICollection<SkillGroupTranslation> Translations { get; } = [];
@@ -19,7 +19,7 @@ public class SkillGroupTranslation : ITranslation
 }
 
 /// <summary>One skill with a 0–100 level. Optionally tied to the <see cref="Tool"/> it is practised with.</summary>
-public class Skill : BaseEntity, ITranslatable<SkillTranslation>
+public class Skill : BaseEntity, ITranslatable<SkillTranslation>, ISortable
 {
     public const int MinLevel = 0;
     public const int MaxLevel = 100;

@@ -6,7 +6,7 @@ namespace KeroAmir.Domain.Catalog;
 /// Software Kero works with (Illustrator, Blender...). Brand names are not translated.
 /// Tools with <see cref="ShowInOrbit"/> circle the K in the hero; clicking one filters projects.
 /// </summary>
-public class Tool : BaseEntity
+public class Tool : BaseEntity, ISortable
 {
     public required string Slug { get; set; }
     public required string Name { get; set; }
