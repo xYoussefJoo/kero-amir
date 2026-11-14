@@ -280,9 +280,6 @@ body { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%
 .bezier-divider__anchor { fill: var(--bg); stroke: var(--muted); stroke-width: 1.5; }
 .bezier-divider__anchor--active { fill: var(--accent); stroke: var(--accent); }
 
-.site-footer { margin-top: 4rem; background: var(--text); color: var(--bg); }
-.site-footer__wordmark { color: var(--bg); }
-.site-footer__wordmark::after { content: ""; display: inline-block; width: 0.18em; height: 0.18em; margin-inline-start: 0.08em; border-radius: 9999px; background: var(--accent); }
 
 /* ---- Section puzzle pattern (PuzzleAssemble). Assembled by default; scattered only once JS marks a section away. */
 .pz-piece {

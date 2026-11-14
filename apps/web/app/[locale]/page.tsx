@@ -9,7 +9,6 @@ import { JourneySection } from "@/components/sections/JourneySection";
 import { ProjectsSection } from "@/components/sections/ProjectsSection";
 import { ContactSection } from "@/components/sections/ContactSection";
 import { ReviewsSection } from "@/components/sections/ReviewsSection";
-import { SiteFooter } from "@/components/sections/SiteFooter";
 import { BezierDivider } from "@/components/theme/BezierDivider";
 
 // Hero with the puzzle K. Texts move to CMS settings when the public site is built out (Phase 4).
@@ -59,7 +58,6 @@ export default function HomePage({ params }: PageProps<"/[locale]">) {
       <ReviewsSection locale={locale as Locale} />
       <BezierDivider flip />
       <ContactSection locale={locale as Locale} />
-      <SiteFooter locale={locale as Locale} />
     </>
   );
 }
