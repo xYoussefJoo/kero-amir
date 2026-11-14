@@ -26,3 +26,7 @@ Thumbs.db
 .idea/
 .vscode/*
 !.vscode/extensions.json
+
+# Hosting deploy profiles hold credentials
+*.publishSettings
+*.pubxml.user

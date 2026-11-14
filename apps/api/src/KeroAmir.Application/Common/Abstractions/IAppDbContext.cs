@@ -1,3 +1,4 @@
+using KeroAmir.Domain.Auth;
 using KeroAmir.Domain.Catalog;
 using KeroAmir.Domain.Settings;
 using KeroAmir.Domain.Skills;
@@ -15,6 +16,7 @@ public interface IAppDbContext
     DbSet<SkillGroup> SkillGroups { get; }
     DbSet<Skill> Skills { get; }
     DbSet<TimelineEntry> TimelineEntries { get; }
+    DbSet<RefreshToken> RefreshTokens { get; }
 
     Task<int> SaveChangesAsync(CancellationToken ct);
 }

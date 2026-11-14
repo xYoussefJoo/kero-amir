@@ -46,3 +46,18 @@ Newest at the bottom. Format: date, decision, why.
 20. **Indexes kept minimal:** unique slugs (filtered on live rows) and FK indexes. Catalog/skills/timeline tables hold
     tens of rows; sort-order indexes would be over-indexing.
 21. **Skill level is guarded in the database** (`CHECK Level BETWEEN 0 AND 100`) as well as in validation.
+22. **Identity lives in Infrastructure** (`AppUser : IdentityUser<Guid>`); Application sees only `IIdentityService` /
+    `ITokenService`, Domain only `RefreshToken` and `Roles`.
+23. **Tokens:** 15-min JWT access tokens (HS256) + 14-day opaque refresh tokens, stored as SHA-256 hashes, rotated on
+    every use. Replaying a used token revokes its whole family (stolen-token detection). Logout revokes the family.
+    Known trade-off: two truly simultaneous refreshes of the same token look like a replay; the BFF serialises refreshes.
+24. **2FA** uses Identity's built-in authenticator (TOTP) provider; login is two steps with a 5-minute signed challenge
+    token whose audience (`…:2fa`) can never pass as an access token.
+25. **Passwords:** 12+ characters, no composition rules (NIST 800-63B). Lockout: 5 failures → 15 minutes, counting 2FA codes.
+    One error message for unknown email and wrong password.
+26. **Rate limit:** 10 sign-in requests per minute per IP (configurable `RateLimits:AuthPerMinute`).
+27. **Owner account is seeded from config** (`Seed:OwnerEmail` / `Seed:OwnerPassword` via user-secrets or host env);
+    idempotent, never committed.
+28. **Integration tests hit real SQL Server**: `KEROAMIR_TEST_SQL_SERVER` (local instance) or Testcontainers in CI;
+    one throwaway database per run.
+29. **Hosting target: MonsterASP.NET (runasp.net) via WebDeploy** for the API. `*.publishSettings` is git-ignored.

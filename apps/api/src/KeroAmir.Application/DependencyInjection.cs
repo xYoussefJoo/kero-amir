@@ -1,5 +1,6 @@
 using FluentValidation;
 using KeroAmir.Application.Common.Messaging;
+using KeroAmir.Application.Features.Auth;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace KeroAmir.Application;
@@ -19,6 +20,7 @@ public static class DependencyInjection
         foreach (var (service, implementation) in handlers)
             services.AddScoped(service, implementation);
 
+        services.AddScoped<TokenIssuer>();
         services.AddValidatorsFromAssembly(assembly, includeInternalTypes: true);
         return services;
     }
