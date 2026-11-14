@@ -1,0 +1,21 @@
+import { spawn } from "node:child_process";
+import { writeFileSync, mkdtempSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
+const port = 9334, edge = "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe";
+const b = spawn(edge, ["--headless=new", `--remote-debugging-port=${port}`, `--user-data-dir=${mkdtempSync(path.join(tmpdir(), "pv-"))}`, "--hide-scrollbars", "about:blank"], { stdio: "ignore" });
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+let t; for (let i = 0; i < 50 && !t; i++) { try { t = (await (await fetch(`http://127.0.0.1:${port}/json/list`)).json()).find((x) => x.type === "page"); } catch { await sleep(200); } }
+const ws = new WebSocket(t.webSocketDebuggerUrl); await new Promise((r) => ws.addEventListener("open", r));
+let id = 0; const pend = new Map();
+ws.addEventListener("message", (e) => { const m = JSON.parse(e.data); if (m.id && pend.has(m.id)) { pend.get(m.id)(m); pend.delete(m.id); } });
+const send = (method, params = {}) => new Promise((r) => { const i = ++id; pend.set(i, r); ws.send(JSON.stringify({ id: i, method, params })); });
+await send("Page.enable");
+await send("Emulation.setDeviceMetricsOverride", { width: 690, height: 1000, deviceScaleFactor: 1, mobile: false });
+await send("Emulation.setEmulatedMedia", { media: "print" });
+await send("Page.navigate", { url: "file:///D:/New_Desktop/kero-amir/docs/reports/kero-amir-report.html" });
+await sleep(1500);
+const h = (await send("Runtime.evaluate", { expression: "document.documentElement.scrollHeight", returnByValue: true })).result.result.value;
+const shot = await send("Page.captureScreenshot", { format: "png", captureBeyondViewport: true, clip: { x: 0, y: 0, width: 690, height: h, scale: 1 } });
+writeFileSync("print-full.png", Buffer.from(shot.result.data, "base64"));
+console.log("height", h); ws.close(); b.kill();

@@ -1,0 +1,164 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Kero Amir - Performance & Security Report</title>
+<style>
+@page { size: A4; margin: 18mm 16mm 18mm 16mm; }
+* { box-sizing: border-box; }
+body { font-family: "Inter", "Segoe UI", Arial, sans-serif; color: #1b1d26; font-size: 10.2pt; line-height: 1.45; margin: 0; }
+h1 { font-size: 23pt; margin: 6px 0 2px; letter-spacing: -0.02em; }
+h2 { font-size: 15pt; margin: 18px 0 6px; padding-top: 6px; border-top: 2px solid #2546EB; }
+h3 { font-size: 11.5pt; margin: 14px 0 4px; }
+.url { color: #2546EB; font-weight: 700; font-size: 12pt; }
+.muted { color: #666; }
+.small { font-size: 8.5pt; color: #777; }
+table { width: 100%; border-collapse: collapse; margin: 6px 0 10px; font-size: 9.2pt; page-break-inside: auto; }
+tr { page-break-inside: avoid; }
+th { background: #16181f; color: #fff; text-align: left; padding: 5px 7px; font-weight: 600; }
+td { padding: 4.5px 7px; vertical-align: top; border-bottom: 1px solid #ececec; }
+tbody tr:nth-child(even) td { background: #f6f7fa; }
+pre { background: #f3f4f6; border: 1px solid #e3e5e8; border-radius: 4px; padding: 8px 10px; font-family: Consolas, "Courier New", monospace; font-size: 7.9pt; line-height: 1.35; white-space: pre-wrap; page-break-inside: avoid; }
+ul { margin: 4px 0 8px 18px; padding: 0; } li { margin: 2px 0; }
+ol { margin: 4px 0 8px 18px; padding: 0; } ol li { margin: 4px 0; }
+.page-break { page-break-before: always; }
+.key { font-size: 9.2pt; margin: 6px 0; }
+.box { border-left: 4px solid #2546EB; background: #f5f7ff; padding: 8px 12px; margin: 8px 0; }
+</style></head><body>
+
+<h1>Performance &amp; Security Report</h1>
+<div class="url">Kero Amir portfolio + CMS (kero-amir.runasp.net API · Next.js web, pre-launch)</div>
+<div class="muted">Prepared 14 November 2026</div>
+
+<h3>Scope and method</h3>
+<p><b>Reviewed:</b> the source code (apps/web: Next.js 16; apps/api: ASP.NET Core .NET 10, EF Core, SQL Server); the production
+build of the web app served locally (<code>next start</code>, the web app is not deployed yet); and the <b>live API</b> at
+https://kero-amir.runasp.net (MonsterASP.NET, IIS).</p>
+<p><b>Measured live:</b> Lighthouse 12 (3 runs each, median) on mobile (simulated slow 4G, 4x CPU) and desktop; response headers
+and redirects with <code>curl</code>; TLS/ALPN negotiation; API latency (30 requests per endpoint, local and live); passive exposure
+checks (GET on exact paths only); the sign-in rate limit (12 requests with a non-existent test address); <code>npm audit</code> and
+<code>dotnet list package --vulnerable --include-transitive</code>.</p>
+<p><b>Not measurable here:</b> the web app's production host, CDN and headers (not deployed); real-user Core Web Vitals (no field data
+yet); HTTP/2 on the API (this client only offered HTTP/1.1). These are marked CHECK, and Section 4 lists the tool that confirms each one.
+<b>Section 6 is a modelled calculation, not a load test.</b> No intrusive or active security testing was performed.</p>
+<p class="key">Status key: <b style="color:#2e7d32">OK</b> observed and sound &nbsp;·&nbsp; <b style="color:#b7791f">CHECK</b> needs a measurement or access not available here &nbsp;·&nbsp; <b style="color:#c0392b">FIX</b> issue visible in the page or code</p>
+
+<h3>Summary</h3>
+<p>The build is in good shape for a pre-launch site: accessibility, SEO and best-practice scores are 100, layout shift is zero, the
+initial JavaScript is lean (195 KB gzip) because three.js only loads on strong desktops, and the API's auth is
+properly hardened (rate limit, lockout, 2FA, closed CORS, no leaked secrets). The <b>main performance risk</b> is the desktop 3D logo,
+which blocks the main thread for about 0.8 s while it builds, plus a 14.8 s cold start on the live API after idle. The <b>main
+security gap</b> is that neither the API nor the web app sends any security headers (no HSTS, nosniff, framing or referrer policy),
+the HTTPS redirect is temporary, and the API's OpenAPI map is public in production.</p>
+<table class=""><thead><tr><th>Area</th><th>Finding</th><th>Status</th></tr></thead><tbody><tr><td>Performance (mobile)</td><td>Lighthouse 90, CLS 0, TBT 193 ms; real LCP 0.33 s, simulated slow-phone LCP 3.2 s</td><td><b style="color:#b7791f">CHECK</b></td></tr><tr><td>Performance (desktop)</td><td>Lighthouse 72: the 3D logo blocks the main thread for 834 ms while it builds</td><td><b style="color:#c0392b">FIX</b></td></tr><tr><td>JavaScript weight</td><td>195 KB gzip initial; three.js only on strong desktops</td><td><b style="color:#2e7d32">OK</b></td></tr><tr><td>Live API latency</td><td>Warm reads ~360 ms from Egypt; cold start 14.8 s after idle</td><td><b style="color:#c0392b">FIX</b></td></tr><tr><td>Security headers</td><td>None on the live API or the web app (no HSTS, nosniff, framing, referrer, CSP)</td><td><b style="color:#c0392b">FIX</b></td></tr><tr><td>HTTPS</td><td>TLS works; HTTP→HTTPS is a temporary 307 and there is no HSTS</td><td><b style="color:#c0392b">FIX</b></td></tr><tr><td>Auth hardening</td><td>Sign-in rate limit returns 429 after 10/min (measured); lockout + 2FA covered by tests</td><td><b style="color:#2e7d32">OK</b></td></tr><tr><td>Exposure</td><td>.env/.git/web.config/appsettings not served; errors are short ProblemDetails; OpenAPI map is public</td><td><b style="color:#c0392b">FIX</b></td></tr><tr><td>Secrets</td><td>No keys or connection strings in client JS or HTML; server secrets in env / web.config</td><td><b style="color:#2e7d32">OK</b></td></tr><tr><td>Dependencies</td><td>API: 0 vulnerable packages. Web: 7 moderate, all dev tooling (ESLint), not shipped</td><td><b style="color:#c0392b">FIX</b></td></tr><tr><td>SEO & sharing</td><td>Title, description, absolute canonical/hreflang OK; no robots.txt, sitemap, Open Graph image</td><td><b style="color:#c0392b">FIX</b></td></tr><tr><td>Accessibility</td><td>Lighthouse 100 (mobile + desktop); skip link, alt text, heading order</td><td><b style="color:#2e7d32">OK</b></td></tr></tbody></table>
+
+<h2 class="page-break">1. Performance</h2>
+<h3>What the page shows</h3>
+<table class=""><thead><tr><th>Observation</th><th>Impact</th><th>Status</th></tr></thead><tbody><tr><td>Web app served by Next.js (static prerender + partial prerender). Production host/CDN not chosen yet (Vercel planned).</td><td>Edge caching and HTTP/2/3 depend on the host.</td><td><b style="color:#b7791f">CHECK</b></td></tr><tr><td>Live API on IIS (MonsterASP): Brotli on (Content-Encoding: br measured); skills payload 2,847 → 1,105 bytes.</td><td>Small, compressed JSON.</td><td><b style="color:#2e7d32">OK</b></td></tr><tr><td>API negotiated HTTP/1.1 (client offered only 1.1).</td><td>HTTP/2 multiplexing unknown on this host.</td><td><b style="color:#b7791f">CHECK</b></td></tr><tr><td>Initial JS + CSS 195 KB gzip, 10 files; three.js (~180 KB gzip) is a separate chunk loaded only on desktops with ≥ 6 cores, WebGL2, no reduced motion.</td><td>Phones never download the 3D engine.</td><td><b style="color:#2e7d32">OK</b></td></tr><tr><td>Desktop: Lighthouse 72, TBT 834 ms. The 3D logo extrudes 14 bevelled pieces (curveSegments 10, bevelSegments 4) in one task on the main thread.</td><td>Page feels briefly frozen on desktop; INP risk during load.</td><td><b style="color:#c0392b">FIX</b></td></tr><tr><td>LCP element: the hero headline (text). Observed LCP 328 ms (= FCP); simulated slow-phone LCP 3.2 s.</td><td>Fast on real loads; the simulated number reflects main-thread work before first paint.</td><td><b style="color:#b7791f">CHECK</b></td></tr><tr><td>Fonts: Clash Display (one 29 KB variable woff2), Inter, JetBrains Mono, all self-hosted via next/font, preloaded (Link header), font-display: swap.</td><td>No third-party font requests, no invisible text.</td><td><b style="color:#2e7d32">OK</b></td></tr><tr><td>Images: logo is inline SVG; header logo via next/image with 1x/2x srcset, explicit size. Both theme variants are preloaded, so one is always unused.</td><td>One wasted early request (~2 KB).</td><td><b style="color:#c0392b">FIX</b></td></tr><tr><td>No video, no third-party scripts, no analytics yet.</td><td>Nothing blocking from other origins.</td><td><b style="color:#2e7d32">OK</b></td></tr><tr><td>Hashed assets: Cache-Control public, max-age=31536000, immutable. HTML: s-maxage=3600, stale-while-revalidate.</td><td>Repeat visits load from cache; HTML refreshes hourly.</td><td><b style="color:#2e7d32">OK</b></td></tr><tr><td>Live API cold start 14.8 s after idle (first request); warm reads p50 360 ms from Egypt; local cached reads p50 2 ms.</td><td>First visitor after a quiet period waits; content pages are cached by the web app, so mainly admin is affected.</td><td><b style="color:#c0392b">FIX</b></td></tr></tbody></table>
+<h3>Recommendations</h3>
+<ul>
+<li><b>Build the 3D pieces without freezing the page.</b> In <code>PuzzleLogo3D.tsx</code>, lower <code>curveSegments</code> to 6 and <code>bevelSegments</code> to 2, and build the geometries a few per frame (or in <code>requestIdleCallback</code>) while the 2D logo is still showing.</li>
+<li><b>Preload only one header logo.</b> In <code>Logo.tsx</code>, drop <code>priority</code> from the dark-theme variant (or both: the header logo is not the LCP).</li>
+<li><b>Keep the API warm.</b> Point a free uptime monitor (e.g. UptimeRobot, every 5 min) at <code>/api/v1/health/live</code>, or enable an "always on" option if the MonsterASP plan has one.</li>
+<li><b>Deploy the web app behind a CDN</b> (Vercel as planned) so static pages are served from the edge with Brotli and HTTP/2/3.</li>
+</ul>
+<h3>Targets to measure against</h3>
+<table class=""><thead><tr><th>Metric</th><th>Good</th><th>Measured (lab, this review)</th><th>Where to measure</th></tr></thead><tbody><tr><td>LCP</td><td>2.5 s or less</td><td>mobile 3.22 s simulated (328 ms observed) · desktop 0.71 s</td><td>PageSpeed Insights, mobile</td></tr><tr><td>INP</td><td>200 ms or less</td><td>not measurable in lab; TBT proxy: mobile 193 ms, desktop 834 ms</td><td>PageSpeed Insights / Chrome DevTools</td></tr><tr><td>CLS</td><td>0.1 or less</td><td>0 (mobile and desktop)</td><td>PageSpeed Insights / Lighthouse</td></tr><tr><td>Total page weight (first load)</td><td>under 1.5 MB</td><td>mobile 329 KB · desktop 571 KB (with 3D)</td><td>DevTools Network tab</td></tr></tbody></table>
+
+<h2 class="page-break">2. Security</h2>
+<h3>What the site shows</h3>
+<table class=""><thead><tr><th>Observation</th><th>Risk</th><th>Status</th></tr></thead><tbody><tr><td>Live API serves HTTPS; HTTP requests get <b>307</b> (temporary) to HTTPS.</td><td>Browsers and crawlers don't remember the upgrade; first request can travel in clear text.</td><td><b style="color:#c0392b">FIX</b></td></tr><tr><td>No <code>Strict-Transport-Security</code> on the API (and none configured for the web app).</td><td>No protection against protocol downgrade on later visits.</td><td><b style="color:#c0392b">FIX</b></td></tr><tr><td>No <code>X-Content-Type-Options</code>, <code>X-Frame-Options</code>/<code>frame-ancestors</code>, <code>Referrer-Policy</code>, <code>Permissions-Policy</code> or CSP on either app (Next.js adds none by default).</td><td>Clickjacking of /admin, MIME sniffing, referrer leaks, no XSS safety net.</td><td><b style="color:#c0392b">FIX</b></td></tr><tr><td><code>X-Powered-By: ASP.NET</code> (API) and <code>X-Powered-By: Next.js</code> (web).</td><td>Free stack fingerprinting for attackers.</td><td><b style="color:#c0392b">FIX</b></td></tr><tr><td>Sign-in rate limit: 10 requests/min per IP, then <b>429</b> (measured live). Account lockout after 5 failures and TOTP 2FA (integration tests).</td><td>Brute force is throttled and locked out.</td><td><b style="color:#2e7d32">OK</b></td></tr><tr><td>CORS: no <code>Access-Control-Allow-Origin</code> for a foreign Origin (measured).</td><td>Other sites can't call the API from a browser.</td><td><b style="color:#2e7d32">OK</b></td></tr><tr><td>Admin auth via BFF: tokens in httpOnly, SameSite=Lax, Secure (production) cookies; Origin check on writes; refresh-token rotation with replay detection.</td><td>Tokens never reach page JavaScript.</td><td><b style="color:#2e7d32">OK</b></td></tr><tr><td><code>/openapi/v1.json</code> returns 200 (66 KB) on the live API.</td><td>Full map of admin endpoints and payloads is public.</td><td><b style="color:#c0392b">FIX</b></td></tr><tr><td>.env, .git/HEAD, web.config, appsettings*.json, logs/ and the API DLL return 404 (GET on exact paths).</td><td>No configuration or source exposure.</td><td><b style="color:#2e7d32">OK</b></td></tr><tr><td>Errors are RFC 7807 ProblemDetails with a trace id, no stack traces.</td><td>No internals leaked.</td><td><b style="color:#2e7d32">OK</b></td></tr><tr><td>No secrets in client JS or HTML (searched all initial chunks); no source maps referenced.</td><td>Nothing to harvest from the bundle.</td><td><b style="color:#2e7d32">OK</b></td></tr><tr><td>External links use <code>rel="noopener noreferrer"</code>; the # links point to real sections.</td><td>No tab-nabbing.</td><td><b style="color:#2e7d32">OK</b></td></tr><tr><td>Contact form not built yet (planned with Turnstile, honeypot and rate limit).</td><td>Nothing exposed today; must be hardened when added.</td><td><b style="color:#b7791f">CHECK</b></td></tr><tr><td>Dependencies: API 0 vulnerable packages (incl. transitive). Web: 7 moderate in ESLint/TypeScript-ESLint/minimatch (dev only, not shipped).</td><td>No runtime exposure; CI tooling should still be patched.</td><td><b style="color:#c0392b">FIX</b></td></tr></tbody></table>
+<h3>Recommended security headers</h3>
+<p>Start the CSP as <b>Report-Only</b>: a strict policy can break things the page relies on (inline theme script, WebGL, fonts), so watch the
+reports, then switch to enforcing. Sources below match what the page actually loads today (all same-origin).</p>
+<p><b>Web, <code>apps/web/next.config.ts</code></b> (also set <code>poweredByHeader: false</code>):</p>
+<pre>poweredByHeader: false,
+async headers() {
+  return [{
+    source: "/(.*)",
+    headers: [
+      { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
+      { key: "X-Content-Type-Options", value: "nosniff" },
+      { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+      { key: "X-Frame-Options", value: "DENY" },
+      { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+      { key: "Content-Security-Policy-Report-Only",
+        value: "default-src 'self'; img-src 'self' data: blob:; font-src 'self'; " +
+               "script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; " +
+               "connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'" },
+    ],
+  }];
+},</pre>
+<p><b>API, <code>apps/api/src/KeroAmir.Api/Program.cs</code></b> (JSON only, so the CSP can be strict):</p>
+<pre>app.UseHsts();                       // with builder.Services.AddHsts(o =&gt; { o.MaxAge = TimeSpan.FromDays(730); o.IncludeSubDomains = true; });
+app.UseHttpsRedirection();           // permanent: builder.Services.AddHttpsRedirection(o =&gt; o.RedirectStatusCode = 308);
+app.Use(async (ctx, next) =&gt;
+{
+    var h = ctx.Response.Headers;
+    h.XContentTypeOptions = "nosniff";
+    h.XFrameOptions = "DENY";
+    h["Referrer-Policy"] = "no-referrer";
+    h.ContentSecurityPolicy = "default-src 'none'; frame-ancestors 'none'";
+    await next();
+});
+if (app.Environment.IsDevelopment())
+    app.MapOpenApi("/openapi/{documentName}.json");   // keep the API map out of production</pre>
+<p><b>Remove <code>X-Powered-By</code> on IIS</b>: in the published <code>web.config</code> (the deploy script already edits it):</p>
+<pre>&lt;system.webServer&gt;
+  &lt;httpProtocol&gt;&lt;customHeaders&gt;&lt;remove name="X-Powered-By" /&gt;&lt;/customHeaders&gt;&lt;/httpProtocol&gt;
+&lt;/system.webServer&gt;</pre>
+<h3>Contact form hardening (when it is built, Phase 6)</h3>
+<ul>
+<li>Validate and length-cap every field server-side (FluentValidation is already in place); never render submitted HTML.</li>
+<li>Cloudflare Turnstile plus a hidden honeypot field; verify the Turnstile token on the API, not in the browser.</li>
+<li>Its own rate limit (e.g. 5 per 10 min per IP) separate from sign-in; email alerts through a background queue.</li>
+<li>Keep the Resend/Turnstile keys in server environment variables only.</li>
+</ul>
+<h3>Preview and launch hygiene</h3>
+<ul>
+<li>Set <code>SITE_URL</code> to the production domain before the first public deploy so canonical and hreflang point at it.</li>
+<li>Protect Vercel preview deployments (Deployment Protection) and send <code>X-Robots-Tag: noindex</code> on previews; /admin already sends noindex.</li>
+<li>Enable GitHub Dependabot <b>security updates only</b> (no routine version PRs).</li>
+</ul>
+
+<h2 class="page-break">3. SEO and sharing</h2>
+<table class=""><thead><tr><th>Item</th><th>Observation</th><th>Status</th></tr></thead><tbody><tr><td>Title and description</td><td>Per language: “Kero Amir | Senior Graphic Designer” + description (en/de).</td><td><b style="color:#2e7d32">OK</b></td></tr><tr><td>Canonical and hreflang</td><td>Absolute canonical, en/de alternates and x-default (fixed in this review); depends on SITE_URL at deploy.</td><td><b style="color:#2e7d32">OK</b></td></tr><tr><td>Open Graph / Twitter cards</td><td>None: no og:title/description/image, no twitter:card. Shared links show no preview.</td><td><b style="color:#c0392b">FIX</b></td></tr><tr><td>Viewport</td><td>width=device-width, initial-scale=1.</td><td><b style="color:#2e7d32">OK</b></td></tr><tr><td>theme-color</td><td>Missing (browser UI won't match the cream/ink theme).</td><td><b style="color:#c0392b">FIX</b></td></tr><tr><td>robots.txt and sitemap.xml</td><td>Both 404.</td><td><b style="color:#c0392b">FIX</b></td></tr><tr><td>Skip link</td><td>“Skip to content” link to #main, visible on focus.</td><td><b style="color:#2e7d32">OK</b></td></tr><tr><td>Alt text</td><td>Logo images alt “Kero Amir”; decorative elements aria-hidden. Project images (Phase 3) will require alt per locale.</td><td><b style="color:#2e7d32">OK</b></td></tr><tr><td>Heading order</td><td>One h1 (hero), h2 per section, h3 in cards.</td><td><b style="color:#2e7d32">OK</b></td></tr><tr><td>Form labels</td><td>Admin sign-in fields have visible labels; Lighthouse accessibility 100.</td><td><b style="color:#2e7d32">OK</b></td></tr></tbody></table>
+<p><b>Fix:</b> add <code>app/robots.ts</code> and <code>app/sitemap.ts</code> (both locales, /admin disallowed), a 1200×630 Open Graph image
+(<code>app/[locale]/opengraph-image.tsx</code> can render the puzzle K on cream), <code>openGraph</code>/<code>twitter</code> fields in
+<code>generateMetadata</code>, and <code>export const viewport = { themeColor: [...] }</code> with light #F4F0E7 and dark #0E1120.</p>
+
+<h2>4. How to verify the CHECK items</h2>
+<table class=""><thead><tr><th>Goal</th><th>Tool / command</th></tr></thead><tbody><tr><td>Real performance and Core Web Vitals (LCP, INP, CLS)</td><td>pagespeed.web.dev on the production URL (mobile and desktop); WebPageTest.org for filmstrip and waterfall</td></tr><tr><td>HTTP security headers</td><td>securityheaders.com; or <code>curl -s -D - -o /dev/null https://kero-amir.runasp.net/api/v1/skills</code></td></tr><tr><td>TLS, HTTP/2 and overall hardening</td><td>MDN HTTP Observatory (developer.mozilla.org/observatory); SSL Labs; <code>curl -sI --http2 https://kero-amir.runasp.net/api/v1/health/live</code></td></tr><tr><td>Web host, CDN and edge caching (after deploy)</td><td><code>curl -sI https://&lt;web-domain&gt;/en</code> (look for x-vercel-cache / age); Vercel dashboard</td></tr><tr><td>Page weight and lazy-loading</td><td>Chrome DevTools &gt; Network, throttle to Slow 4G, tick 'Disable cache'</td></tr><tr><td>Accessibility</td><td>Lighthouse accessibility audit; axe DevTools extension</td></tr><tr><td>Contact form hardening (when built)</td><td>Submit with the honeypot filled (must be rejected); 6 quick submissions (6th must get 429)</td></tr><tr><td>Dependency vulnerabilities</td><td><code>npm audit</code> in apps/web; <code>dotnet list apps/api/KeroAmir.slnx package --vulnerable --include-transitive</code>; GitHub Dependabot</td></tr></tbody></table>
+
+<h2>5. Priority action list</h2>
+<ol>
+<li><b>Add the security headers</b> (Section 2) to the API and the web app; confirm with securityheaders.com (target: A).</li>
+<li><b>Make HTTPS permanent on the API</b> (308 redirect + HSTS) and remove <code>X-Powered-By</code>; confirm with <code>curl -sI http://kero-amir.runasp.net/</code>.</li>
+<li><b>Serve the OpenAPI document only in Development</b>; confirm <code>/openapi/v1.json</code> returns 404 live.</li>
+<li><b>Add robots.txt, sitemap.xml, Open Graph/Twitter tags and theme-color</b>; confirm with a link preview (opengraph.xyz) and Google Search Console.</li>
+<li><b>Stop the desktop 3D logo from blocking the main thread</b> (lighter bevels, build pieces across frames); confirm Lighthouse desktop TBT under 200 ms.</li>
+<li><b>Keep the API warm</b> with a 5-minute uptime ping; confirm the first request after 30 idle minutes is under 1 s.</li>
+<li><b>Set SITE_URL and deploy the web app behind a CDN</b>; confirm canonical tags and run PageSpeed Insights on the real URL.</li>
+<li><b>Patch the dev tooling</b> (<code>npm audit fix</code>) and enable Dependabot security updates; confirm <code>npm audit</code> reports 0.</li>
+</ol>
+
+<h2 class="page-break">6. Capacity estimate (modelled)</h2>
+<div class="box"><b>This section is a calculation, not a measurement.</b> No load was generated against the site. The model uses the
+measured first-visit request count (19 requests, mobile) and the heaviest measured first-visit size (571 KB,
+desktop with the 3D chunk).</div>
+<pre>requests/sec = (concurrent users / read time in seconds) x requests per visit
+visits/sec   = concurrent users / read time (typical scenario: 5 s)
+bandwidth    = visits/sec x first-visit MB x 8   (Mbps)
+transfer/hr  = visits/sec x 3600 x first-visit MB   (GB = /1024)</pre>
+<table class=""><thead><tr><th>Scenario</th><th>Requests per visit</th><th>Read time</th><th>Reasoning</th></tr></thead><tbody><tr><td>Light</td><td>11.4</td><td>8 s</td><td>Cached assets, visitor skims, no 3D (phone)</td></tr><tr><td>Typical</td><td>19</td><td>5 s</td><td>Measured first visit: 19 requests (HTML, JS/CSS chunks, fonts, logo)</td></tr><tr><td>Heavy</td><td>30.4</td><td>3 s</td><td>Cold cache, desktop 3D chunk, fast scrolling through all sections</td></tr></tbody></table>
+<svg viewBox="0 0 640 300" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="Inter,Segoe UI,sans-serif" font-size="11"><text x="320" y="16" text-anchor="middle" font-weight="700" font-size="12">Requests per second vs concurrent users (calculation, not measured)</text><line x1="60" x2="620" y1="260" y2="260" stroke="#e5e5e5"/><text x="52" y="264" text-anchor="end" fill="#555">0</text><line x1="60" x2="620" y1="213.6" y2="213.6" stroke="#e5e5e5"/><text x="52" y="217.6" text-anchor="end" fill="#555">6,000</text><line x1="60" x2="620" y1="167.2" y2="167.2" stroke="#e5e5e5"/><text x="52" y="171.2" text-anchor="end" fill="#555">12,000</text><line x1="60" x2="620" y1="120.80000000000001" y2="120.80000000000001" stroke="#e5e5e5"/><text x="52" y="124.80000000000001" text-anchor="end" fill="#555">18,000</text><line x1="60" x2="620" y1="74.39999999999998" y2="74.39999999999998" stroke="#e5e5e5"/><text x="52" y="78.39999999999998" text-anchor="end" fill="#555">24,000</text><line x1="60" x2="620" y1="28" y2="28" stroke="#e5e5e5"/><text x="52" y="32" text-anchor="end" fill="#555">30,000</text><text x="60" y="276" text-anchor="middle" fill="#555">0</text><text x="172" y="276" text-anchor="middle" fill="#555">500</text><text x="284" y="276" text-anchor="middle" fill="#555">1,000</text><text x="396" y="276" text-anchor="middle" fill="#555">1,500</text><text x="508" y="276" text-anchor="middle" fill="#555">2,000</text><text x="620" y="276" text-anchor="middle" fill="#555">2,500</text><text x="320" y="294" text-anchor="middle" fill="#333">Concurrent users</text><text transform="translate(14 150) rotate(-90)" text-anchor="middle" fill="#333">Requests / second</text><polyline points="60.0,260.0 65.6,259.7 82.4,258.9 116.0,257.2 172.0,254.5 284.0,249.0 620.0,232.4" fill="none" stroke="#2e7d32" stroke-width="2.5"/><rect x="70" y="34" width="12" height="3" fill="#2e7d32"/><text x="88" y="38">Light (11.4 req / 8 s)</text><polyline points="60.0,260.0 65.6,259.3 82.4,257.1 116.0,252.7 172.0,245.3 284.0,230.6 620.0,186.5" fill="none" stroke="#2546EB" stroke-width="2.5"/><rect x="70" y="50" width="12" height="3" fill="#2546EB"/><text x="88" y="54">Typical (19 req / 5 s)</text><polyline points="60.0,260.0 65.6,258.0 82.4,252.2 116.0,240.4 172.0,220.8 284.0,181.6 620.0,64.1" fill="none" stroke="#c0392b" stroke-width="2.5"/><rect x="70" y="66" width="12" height="3" fill="#c0392b"/><text x="88" y="70">Heavy (30.4 req / 3 s)</text></svg>
+<table class=""><thead><tr><th>Concurrent users</th><th>Light req/s</th><th>Typical req/s</th><th>Heavy req/s</th></tr></thead><tbody><tr><td>25</td><td>36</td><td>95</td><td>253</td></tr><tr><td>100</td><td>143</td><td>380</td><td>1,013</td></tr><tr><td>250</td><td>356</td><td>950</td><td>2,533</td></tr><tr><td>500</td><td>713</td><td>1,900</td><td>5,067</td></tr><tr><td>1,000</td><td>1,425</td><td>3,800</td><td>10,133</td></tr><tr><td>2,500</td><td>3,563</td><td>9,500</td><td>25,333</td></tr></tbody></table>
+<h3>Bandwidth check (first visit 0.56 MB, typical read time)</h3>
+<table class=""><thead><tr><th>Concurrent users</th><th>Visits / s</th><th>Bandwidth (Mbps)</th><th>Transfer per hour (GB)</th></tr></thead><tbody><tr><td>100</td><td>20</td><td>89.2</td><td>39.21</td></tr><tr><td>500</td><td>100</td><td>446.1</td><td>196.04</td></tr><tr><td>1,000</td><td>200</td><td>892.2</td><td>392.07</td></tr></tbody></table>
+<h3>How to read this</h3>
+<p>On a CDN, request rate is rarely the limit; bandwidth and plan quotas bind first. Here the pages are prerendered and cached, so
+browsing does not touch the API at all: the API is only called when the cache revalidates (hourly, or when Kero publishes) and by the
+admin. The real bottlenecks are the dynamic endpoints (sign-in today, the contact form later), which are rate-limited and should be
+tested separately and gently. Check the MonsterASP plan's CPU/bandwidth limits and the web host's data-transfer quota before a
+launch or campaign. A load-test script is delivered alongside this report: <code>docs/reports/kero-amir-loadtest.js</code> (k6; static
+pages ramp to 100 users, public API reads at a fixed 5 req/s; it never calls sign-in, admin or write endpoints). Run it only against a
+deployment you own, ideally staging, outside peak hours.</p>
+<p class="small"><b>Assumptions:</b> 19 requests and 571 KB per first visit (measured in the lab); read times of 8/5/3 s; light/heavy scenarios at 0.6x/1.6x the measured request count; repeat visits are lighter because hashed assets are cached for a year.
+<b>Limitations:</b> findings come from the publicly served content and the source code at the time of review (web app measured on a local production build, API measured live); no intrusive or active security testing was performed. Sharing a PageSpeed Insights run on the deployed site, the <code>curl -sI</code> header output after the fixes, and a k6 summary would let this report be updated with field data.</p>
+</body></html>
