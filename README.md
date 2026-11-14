@@ -53,7 +53,7 @@ Live API: https://kero-amir.runasp.net/api/v1/health/ready
 
 ```powershell
 # once: enter secrets (hidden prompts), saved to git-ignored deploy/production.secrets.json
-powershell -ExecutionPolicy Bypass -File .deployset-secrets.ps1
+powershell -ExecutionPolicy Bypass -File .\deploy\set-secrets.ps1
 
 # every deploy (migrations run on the server at startup)
 ./deploy/deploy.ps1 -PublishSettings "<path>.publishSettings" -ServerSideDatabase -SkipSeed
