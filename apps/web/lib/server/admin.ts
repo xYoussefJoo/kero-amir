@@ -36,3 +36,26 @@ export const getOverview = cache(async (): Promise<DashboardOverview> => {
   const headers = authHeaders(await token());
   return read(api.GET("/api/v1/admin/overview", { headers }));
 });
+
+type Schemas = components["schemas"];
+export type InboxStatus = Schemas["InboxStatus"];
+export type ModerationStatus = Schemas["ModerationStatus"];
+export type ContactMessage = Schemas["ContactMessageDto"];
+export type ReviewAdmin = Schemas["TestimonialAdminDto"];
+export type Paged<T> = { items: T[]; page: number; pageSize: number; totalCount: number };
+
+export const PAGE_SIZE = 20;
+
+/** Inbox page; no status = everything. Newest first. */
+export async function getMessages(status: InboxStatus | undefined, page: number): Promise<Paged<ContactMessage>> {
+  const headers = authHeaders(await token());
+  const data = await read(api.GET("/api/v1/admin/messages", { headers, params: { query: { status, page, pageSize: PAGE_SIZE } } }));
+  return { ...data, page: Number(data.page), pageSize: Number(data.pageSize), totalCount: Number(data.totalCount) };
+}
+
+/** Moderation queue page; no status = everything. Newest first. */
+export async function getReviews(status: ModerationStatus | undefined, page: number): Promise<Paged<ReviewAdmin>> {
+  const headers = authHeaders(await token());
+  const data = await read(api.GET("/api/v1/admin/testimonials", { headers, params: { query: { status, page, pageSize: PAGE_SIZE } } }));
+  return { ...data, page: Number(data.page), pageSize: Number(data.pageSize), totalCount: Number(data.totalCount) };
+}

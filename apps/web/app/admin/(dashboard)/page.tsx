@@ -1,18 +1,10 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
 import { getMe, getOverview, type DashboardOverview } from "@/lib/server/admin";
+import { ago } from "@/lib/time";
 
 export const metadata: Metadata = { title: "Overview" };
-
-const relative = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
-
-/** "3 hours ago", "yesterday", "2 weeks ago". */
-function ago(iso: string, now: number): string {
-  const seconds = Math.round((Date.parse(iso) - now) / 1000);
-  const steps: [Intl.RelativeTimeFormatUnit, number][] = [["year", 31536000], ["month", 2592000], ["week", 604800], ["day", 86400], ["hour", 3600], ["minute", 60]];
-  for (const [unit, size] of steps) if (Math.abs(seconds) >= size) return relative.format(Math.round(seconds / size), unit);
-  return "just now";
-}
 
 export default function OverviewPage() {
   return (
@@ -46,7 +38,7 @@ async function Overview() {
       <StatCards data={data} />
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Panel title="Latest messages" count={data.inbox.new} countLabel="new">
+        <Panel title="Latest messages" count={data.inbox.new} countLabel="new" href="/admin/inbox" linkLabel="Open inbox">
           {data.latestMessages.length === 0 ? (
             <Empty>No messages yet. Enquiries from the contact form land here.</Empty>
           ) : (
@@ -65,7 +57,7 @@ async function Overview() {
           )}
         </Panel>
 
-        <Panel title="Waiting for approval" count={data.reviews.pending} countLabel="pending">
+        <Panel title="Waiting for approval" count={data.reviews.pending} countLabel="pending" href="/admin/reviews" linkLabel="Review queue">
           {data.pendingReviews.length === 0 ? (
             <Empty>All caught up. New reviews wait here until you approve them.</Empty>
           ) : (
@@ -113,7 +105,9 @@ function StatCards({ data }: { data: DashboardOverview }) {
   );
 }
 
-function Panel({ title, count, countLabel, children }: { title: string; count: number | string; countLabel: string; children: React.ReactNode }) {
+function Panel({ title, count, countLabel, href, linkLabel, children }: {
+  title: string; count: number | string; countLabel: string; href: string; linkLabel: string; children: React.ReactNode;
+}) {
   return (
     <section className="admin-panel">
       <header className="flex items-center justify-between gap-3">
@@ -121,12 +115,13 @@ function Panel({ title, count, countLabel, children }: { title: string; count: n
         <span className="admin-chip">{Number(count)} {countLabel}</span>
       </header>
       {children}
+      <Link href={href} className="mt-auto text-sm font-semibold text-primary underline-offset-4 hover:underline">{linkLabel} →</Link>
     </section>
   );
 }
 
 function Empty({ children }: { children: React.ReactNode }) {
-  return <p className="rounded-xl border border-dashed border-muted/40 p-6 text-center text-sm text-muted">{children}</p>;
+  return <p className="admin-empty">{children}</p>;
 }
 
 /** Same layout as the real content, so nothing jumps when the data arrives. */

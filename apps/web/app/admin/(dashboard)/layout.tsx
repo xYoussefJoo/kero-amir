@@ -7,8 +7,8 @@ import { SignOutButton } from "@/components/admin/SignOutButton";
 
 const NAV: AdminNavItem[] = [
   { href: "/admin", label: "Overview", icon: "overview" },
-  { href: "/admin/inbox", label: "Inbox", icon: "inbox", soon: true },
-  { href: "/admin/reviews", label: "Reviews", icon: "reviews", soon: true },
+  { href: "/admin/inbox", label: "Inbox", icon: "inbox" },
+  { href: "/admin/reviews", label: "Reviews", icon: "reviews" },
   { href: "/admin/projects", label: "Projects", icon: "projects", soon: true },
   { href: "/admin/content", label: "Content", icon: "content", soon: true },
   { href: "/admin/account", label: "Account", icon: "account", soon: true },
