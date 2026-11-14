@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { getTranslations } from "next-intl/server";
 import { getTestimonials, type Testimonial } from "@/lib/content";
 import type { Locale } from "@/i18n/routing";
@@ -11,12 +12,12 @@ const flag = (code: string) => String.fromCodePoint(...[...code.toUpperCase()].m
 const TONES = ["paper", "blue", "ink", "orange"] as const;
 const MAX_PIECES = 8;
 
-function ReviewPiece({ review, tone, regions, index }: {
-  review: Testimonial; tone: (typeof TONES)[number]; regions: Intl.DisplayNames; index: number;
+function ReviewPiece({ review, tone, regions, hidden }: {
+  review: Testimonial; tone: (typeof TONES)[number]; regions: Intl.DisplayNames; hidden?: boolean;
 }) {
   const rating = Number(review.rating);
   return (
-    <li className={`review-piece review-piece--${tone} pz-piece`} style={pieceStyle(3 + index, 9, 0.8)}>
+    <li className={`review-piece review-piece--${tone}`} aria-hidden={hidden || undefined}>
       <figure className="flex h-full flex-col gap-4">
         <div role="img" aria-label={`${rating}/5`} className="review-piece__stars">
           {"★".repeat(rating)}<span className="opacity-30">{"★".repeat(5 - rating)}</span>
@@ -37,8 +38,10 @@ function ReviewPiece({ review, tone, regions, index }: {
 }
 
 /**
- * "The review puzzle": approved reviews as interlocking jigsaw pieces in the brand colours. The last piece is
- * missing: an empty slot that opens the review form. Static by design (no looping animation): pieces lift on hover.
+ * "The review puzzle" as a banner: approved reviews are interlocking jigsaw pieces in the brand colours, sliding by
+ * in one full-width strip (CSS only; paused on hover/focus and off-screen; reduced motion gets a swipeable strip).
+ * The list is rendered twice for a seamless loop; the copy is hidden from screen readers.
+ * Below it, the missing piece: an empty slot that opens the review form.
  */
 export async function ReviewsSection({ locale }: { locale: Locale }) {
   const [reviews, t] = await Promise.all([getTestimonials(), getTranslations({ locale, namespace: "Reviews" })]);
@@ -57,29 +60,38 @@ export async function ReviewsSection({ locale }: { locale: Locale }) {
   };
 
   return (
-    <PuzzleAssemble as="section" id="reviews" className="mx-auto flex w-full max-w-6xl scroll-mt-20 flex-col gap-14 px-4 py-24 sm:px-6" threshold={0.1}>
-      <SectionHeader label={t("label")} title={t("title")} intro={pieces.length ? t("intro") : t("empty")} />
+    <PuzzleAssemble as="section" id="reviews" className="flex w-full scroll-mt-20 flex-col gap-12 py-24" threshold={0.1}>
+      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
+        <SectionHeader label={t("label")} title={t("title")} intro={pieces.length ? t("intro") : t("empty")} />
+      </div>
 
-      <ul className="review-wall">
-        {pieces.map((review, i) => (
-          <ReviewPiece key={review.id} review={review} tone={TONES[i % TONES.length]} regions={regions} index={i} />
-        ))}
-        {/* The missing piece: where the next client's review fits. */}
-        <li className="review-piece review-piece--slot pz-piece" style={pieceStyle(3 + pieces.length, 9, 0.8)}>
-          <ReviewForm
-            locale={locale}
-            labels={labels}
-            triggerClassName="review-slot"
-            trigger={
-              <>
-                <span aria-hidden className="review-slot__plus">+</span>
-                <span className="font-display text-xl font-semibold">{t("slotTitle")}</span>
-                <span className="text-sm opacity-75">{t("slotText")}</span>
-              </>
-            }
-          />
-        </li>
-      </ul>
+      {pieces.length > 0 && (
+        <div className="review-banner" style={{ "--review-loop": `${pieces.length * 7}s` } as CSSProperties}>
+          <ul className="review-banner__track">
+            {[false, true].map((copy) =>
+              pieces.map((review, i) => (
+                <ReviewPiece key={`${copy ? "b" : "a"}-${review.id}`}review={review} tone={TONES[i % TONES.length]} regions={regions} hidden={copy} />
+              )),
+            )}
+          </ul>
+        </div>
+      )}
+
+      {/* The missing piece: where the next client's review fits. */}
+      <div className="mx-auto w-full max-w-md px-4 pz-piece" style={pieceStyle(4, 9, 0.8)}>
+        <ReviewForm
+          locale={locale}
+          labels={labels}
+          triggerClassName="review-slot"
+          trigger={
+            <>
+              <span aria-hidden className="review-slot__plus">+</span>
+              <span className="font-display text-xl font-semibold">{t("slotTitle")}</span>
+              <span className="text-sm opacity-75">{t("slotText")}</span>
+            </>
+          }
+        />
+      </div>
     </PuzzleAssemble>
   );
 }

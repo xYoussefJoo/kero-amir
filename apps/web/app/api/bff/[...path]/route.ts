@@ -1,9 +1,10 @@
+import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { apiUrl } from "@/lib/server/env";
 import { isSameOrigin } from "@/lib/server/origin";
 import { clearSession, Cookies, refreshSession, setSession } from "@/lib/server/session";
-import { isAllowedBffPath } from "@/lib/server/bff";
+import { isAllowedBffPath, tagsForBffPath } from "@/lib/server/bff";
 
 /**
  * Admin calls from the browser: /api/bff/admin/... → API /api/v1/admin/... with the Bearer token from the cookie.
@@ -40,6 +41,9 @@ async function handle(request: Request, { params }: { params: Promise<{ path: st
     refreshed = refreshToken ? await refreshSession(refreshToken) : null;
     if (refreshed) response = await send(refreshed.accessToken);
   }
+
+  // A saved change shows on the public site at the next visit, not when its cache would have expired.
+  if (request.method !== "GET" && response.ok) for (const tag of tagsForBffPath(path)) revalidateTag(tag, { expire: 0 });
 
   const result = new NextResponse(response.body, {
     status: response.status,

@@ -526,19 +526,29 @@ body { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%
   .project-card__img, .project-cover { transition: none; }
 }
 
-/* ---- Reviews: "the review puzzle". Interlocking pieces in the brand colours; the last piece is the empty slot.
-   Static (no loops). Knobs reach into the next piece; the wall clips the ones on its outer edges. */
-.review-wall {
-  display: grid;
-  grid-template-columns: 1fr;
+/* ---- Reviews: "the review puzzle" banner. Interlocking pieces in the brand colours slide by in one strip.
+   Only the strip's transform animates (compositor only); paused on hover/focus and while the section is off-screen. */
+.review-banner { overflow: hidden; padding-block: 0.25rem; }
+.review-banner__track {
+  display: flex;
+  width: max-content;
   list-style: none;
   margin: 0;
   padding: 0;
-  overflow: hidden;
-  border-radius: 1.5rem;
+  animation: review-slide var(--review-loop, 40s) linear infinite;
 }
-@media (min-width: 768px) { .review-wall { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (min-width: 1024px) { .review-wall { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.review-banner:hover .review-banner__track,
+.review-banner:focus-within .review-banner__track,
+[data-visible="false"] .review-banner__track { animation-play-state: paused; }
+@keyframes review-slide { to { transform: translateX(-50%); } }
+.review-banner .review-piece { width: min(22rem, 82vw); flex: none; }
+.review-banner .review-piece::before { display: none; } /* the strip has one row: only side knobs */
+@media (prefers-reduced-motion: reduce) {
+  .review-banner { overflow-x: auto; scroll-snap-type: x mandatory; }
+  .review-banner__track { animation: none; }
+  .review-banner .review-piece { scroll-snap-align: start; }
+  .review-banner .review-piece[aria-hidden] { display: none; }
+}
 .review-piece {
   --piece-bg: var(--surface);
   --piece-fg: var(--text);
@@ -573,14 +583,11 @@ body { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%
 .review-piece__text { font-size: 1.05rem; line-height: 1.55; }
 
 /* The missing piece: an empty dashed slot that opens the review form. */
-.review-piece--slot { background: transparent; padding: 1rem; }
-.review-piece--slot::before, .review-piece--slot::after { display: none; }
-.review-piece--slot:hover { box-shadow: none; }
 .review-slot {
   display: flex;
   width: 100%;
   height: 100%;
-  min-height: 15rem;
+  min-height: 11rem;
   flex-direction: column;
   align-items: center;
   justify-content: center;
