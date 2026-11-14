@@ -26,11 +26,11 @@ export async function ContactSection({ locale }: { locale: Locale }) {
     <PuzzleAssemble as="section" id="contact" className="mx-auto w-full max-w-6xl scroll-mt-20 px-4 py-24 sm:px-6" threshold={0.15}>
       <div className="missing-piece pz-card grid items-start gap-12 px-6 py-12 sm:px-12 lg:grid-cols-[1.1fr_0.9fr]">
         <div className="flex flex-col gap-5">
-          <p className="pz-piece font-mono text-xs tracking-[0.2em] text-muted" style={pieceStyle(0, 7)}>{t("label")}</p>
-          <h2 className="pz-piece font-display text-4xl font-semibold leading-[1.05] tracking-tight sm:text-5xl" style={pieceStyle(1, 7)}>
+          <p className="pz-piece type-label" style={pieceStyle(0, 7)}>{t("label")}</p>
+          <h2 className="pz-piece type-h2" style={pieceStyle(1, 7)}>
             {t("title")}
           </h2>
-          <p className="pz-piece max-w-xl text-lg text-muted" style={pieceStyle(2, 7)}>{t("intro")}</p>
+          <p className="pz-piece type-lead" style={pieceStyle(2, 7)}>{t("intro")}</p>
           <div className="pz-piece pt-2" style={pieceStyle(3, 7)}>
             <ContactForm
               locale={locale}

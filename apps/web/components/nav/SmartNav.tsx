@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 
 /**
  * Behaviour for the server-rendered header (the markup stays on the server, this adds the "smart" parts):
- * - hides while scrolling down, returns on scroll up (never while the hero K is flying into the logo slot);
+ * - stays visible (sticky) while scrolling;
  * - "scrolled" glass state, a reading-progress bar (--progress), and the active section link (aria-current);
  * - mobile menu open/close (Escape, link tap).
  * All updates are attribute / CSS-variable writes in one rAF-throttled scroll handler: no React re-render per scroll.
@@ -16,7 +16,6 @@ export function SmartNav({ children, menuLabel, closeLabel }: { children: ReactN
   useEffect(() => {
     const header = ref.current;
     if (!header) return;
-    let lastY = window.scrollY;
     let frame = 0;
 
     const update = () => {
@@ -25,12 +24,6 @@ export function SmartNav({ children, menuLabel, closeLabel }: { children: ReactN
       const max = document.documentElement.scrollHeight - window.innerHeight;
       header.style.setProperty("--progress", max > 0 ? (y / max).toFixed(4) : "0");
       header.dataset.scrolled = String(y > 24);
-      const logoFlying = document.documentElement.dataset.logo === "flying";
-      const goingDown = y > lastY + 4;
-      const goingUp = y < lastY - 4;
-      if (goingDown && y > 160 && !logoFlying) header.dataset.hidden = "true";
-      else if (goingUp || y <= 160 || logoFlying) header.dataset.hidden = "false";
-      lastY = y;
     };
     const onScroll = () => {
       if (!frame) frame = requestAnimationFrame(update);

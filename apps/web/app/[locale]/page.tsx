@@ -9,6 +9,8 @@ import { JourneySection } from "@/components/sections/JourneySection";
 import { ProjectsSection } from "@/components/sections/ProjectsSection";
 import { ContactSection } from "@/components/sections/ContactSection";
 import { ReviewsSection } from "@/components/sections/ReviewsSection";
+import { SiteFooter } from "@/components/sections/SiteFooter";
+import { BezierDivider } from "@/components/theme/BezierDivider";
 
 // Hero with the puzzle K. Texts move to CMS settings when the public site is built out (Phase 4).
 export default function HomePage({ params }: PageProps<"/[locale]">) {
@@ -20,11 +22,11 @@ export default function HomePage({ params }: PageProps<"/[locale]">) {
     <>
       <section className="mx-auto grid w-full max-w-6xl flex-1 items-center gap-12 px-4 py-12 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:py-20">
         <div className="order-2 flex flex-col gap-6 lg:order-1">
-          <p className="font-mono text-xs tracking-[0.2em] text-muted">{t("label")}</p>
-          <h1 className="font-display text-5xl font-semibold leading-[1.02] tracking-tight sm:text-7xl">
+          <p className="type-label">{t("label")}</p>
+          <h1 className="type-hero">
             {t("title")}
           </h1>
-          <p className="max-w-xl text-lg text-muted">{t("subtitle")}</p>
+          <p className="type-lead">{t("subtitle")}</p>
           <div className="flex flex-wrap gap-3 pt-2">
             <a
               href="#work"
@@ -45,12 +47,19 @@ export default function HomePage({ params }: PageProps<"/[locale]">) {
           <HeroLogo />
         </div>
       </section>
+      <BezierDivider />
       <AboutSection locale={locale as Locale} />
+      <BezierDivider flip />
       <ToolkitSection locale={locale as Locale} />
+      <BezierDivider />
       <ProjectsSection locale={locale as Locale} />
+      <BezierDivider flip />
       <JourneySection locale={locale as Locale} />
+      <BezierDivider />
       <ReviewsSection locale={locale as Locale} />
+      <BezierDivider flip />
       <ContactSection locale={locale as Locale} />
+      <SiteFooter locale={locale as Locale} />
     </>
   );
 }

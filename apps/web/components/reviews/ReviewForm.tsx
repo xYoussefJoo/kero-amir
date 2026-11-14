@@ -25,7 +25,13 @@ function schema(l: ReviewFormLabels["errors"]) {
   });
 }
 
-export function ReviewForm({ locale, labels }: { locale: string; labels: ReviewFormLabels }) {
+/** `trigger`: optional custom opener (e.g. the empty puzzle slot); defaults to a button with labels.open. */
+export function ReviewForm({ locale, labels, triggerClassName, trigger }: {
+  locale: string;
+  labels: ReviewFormLabels;
+  triggerClassName?: string;
+  trigger?: React.ReactNode;
+}) {
   const dialog = useRef<HTMLDialogElement>(null);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -57,8 +63,8 @@ export function ReviewForm({ locale, labels }: { locale: string; labels: ReviewF
   return (
     <>
       <button type="button" onClick={() => dialog.current?.showModal()}
-        className="rounded-full bg-primary px-6 py-3 font-semibold text-on-primary transition-opacity hover:opacity-90">
-        {labels.open}
+        className={triggerClassName ?? "rounded-full bg-primary px-6 py-3 font-semibold text-on-primary transition-opacity hover:opacity-90"}>
+        {trigger ?? labels.open}
       </button>
 
       <dialog ref={dialog} className="review-dialog pz-card" aria-labelledby="review-title" onClose={close}>

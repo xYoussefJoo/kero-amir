@@ -13,11 +13,11 @@ function rand(seed: number): number {
 export function pieceStyle(index: number, seed = 0, spread = 1): CSSProperties {
   const s = index * 7 + seed * 31 + 1;
   const angle = rand(s) * Math.PI * 2;
-  const distance = (90 + rand(s + 3) * 140) * spread;
+  const distance = (40 + rand(s + 3) * 50) * spread;
   return {
     "--dx": `${Math.round(Math.cos(angle) * distance)}px`,
     "--dy": `${Math.round(Math.sin(angle) * distance)}px`,
-    "--r": `${Math.round((rand(s + 5) - 0.5) * 50)}deg`,
-    "--d": `${(index * 0.07).toFixed(2)}s`,
+    "--r": `${Math.round((rand(s + 5) - 0.5) * 16)}deg`,
+    "--d": `${(index * 0.05).toFixed(2)}s`,
   } as CSSProperties;
 }

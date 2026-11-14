@@ -3,7 +3,6 @@ import { getTranslations } from "next-intl/server";
 import { getSkills, getTools } from "@/lib/content";
 import type { Locale } from "@/i18n/routing";
 import { PuzzleAssemble } from "@/components/puzzle/PuzzleAssemble";
-import { MagneticTilt } from "@/components/puzzle/MagneticTilt";
 import { SectionHeader } from "@/components/puzzle/SectionHeader";
 import { pieceStyle } from "@/components/puzzle/scatter";
 import { PuzzleLogo2D } from "@/components/hero/PuzzleLogo2D";
@@ -54,9 +53,9 @@ export async function ToolkitSection({ locale }: { locale: Locale }) {
         <ul className="grid gap-x-6 gap-y-12 md:grid-cols-3">
           {groups.map((group, gi) => (
             <li key={group.id} className="pz-piece" style={pieceStyle(5 + gi, 4, 1.3)}>
-              <MagneticTilt className="h-full">
+              <div className="h-full">
                 <div className="pz-card flex h-full flex-col gap-5 px-6 pb-7 pt-9">
-                  <h3 className="font-display text-xl font-semibold">{group.name}</h3>
+                  <h3 className="type-h3">{group.name}</h3>
                   <ul className="flex flex-col gap-3.5">
                     {group.skills.map((skill, si) => (
                       <li key={skill.id} className="flex flex-col gap-1.5">
@@ -74,7 +73,7 @@ export async function ToolkitSection({ locale }: { locale: Locale }) {
                     ))}
                   </ul>
                 </div>
-              </MagneticTilt>
+              </div>
             </li>
           ))}
         </ul>

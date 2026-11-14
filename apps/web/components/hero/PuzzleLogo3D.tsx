@@ -87,9 +87,14 @@ type Props = {
   /** The hero box the logo sits in; the full-screen canvas aligns the K to it every frame. */
   anchor: RefObject<HTMLElement | null>;
   theme: Theme;
+  /** Called once if this GPU can't keep the intro above ~40 fps: the page then switches to the 2D logo. */
+  onSlow?: () => void;
 };
 
-function Logo({ anchor, theme }: Props) {
+/** Frame-time budget for the adaptive fallback: a median above 25 ms (~40 fps) during the intro means "too heavy". */
+const SLOW_FRAME_SECONDS = 0.025;
+
+function Logo({ anchor, theme, onSlow }: Props) {
   const geometries = usePieceGeometries();
   const root = useRef<THREE.Group>(null);
   const meshes = useRef<(THREE.Mesh | null)[]>([]);
@@ -98,7 +103,9 @@ function Logo({ anchor, theme }: Props) {
   const burstHandled = useRef(-Infinity);
   const prevTravel = useRef(0);
   const logoState = useRef<"flying" | "docked" | null>(null);
-  const { camera, size, pointer } = useThree();
+  const introFrames = useRef<number[]>([]);
+  const slowChecked = useRef(false);
+  const { camera, size, pointer, invalidate } = useThree();
 
   // One material per piece so each can flash on its own when it snaps in.
   const materials = useMemo(
@@ -124,7 +131,8 @@ function Logo({ anchor, theme }: Props) {
     LOGO_PIECES.forEach((piece, i) => {
       if (piece.color === "cream") materials[i].color.set(theme === "dark" ? COLORS.creamDark : COLORS.creamLight);
     });
-  }, [theme, materials]);
+    invalidate(); // on-demand rendering: draw the new colors
+  }, [theme, materials, invalidate]);
 
   useEffect(() => () => {
     geometries.forEach((g) => g.dispose());
@@ -149,6 +157,17 @@ function Logo({ anchor, theme }: Props) {
     const t = now - startedAt;
     const box = anchor.current?.getBoundingClientRect();
     if (!root.current || !box) return;
+
+    // Adaptive quality: measure real frame times during the intro; a GPU that can't hold ~40 fps gets the 2D logo.
+    if (!slowChecked.current) {
+      if (t > 0.4 && t < 2) introFrames.current.push(rawDelta);
+      if (t >= 2) {
+        slowChecked.current = true;
+        const sorted = [...introFrames.current].sort((a, b) => a - b);
+        if (sorted.length > 10 && sorted[Math.floor(sorted.length / 2)] > SLOW_FRAME_SECONDS) onSlow?.();
+      }
+    }
+    let busy = t < POP_AT + 1.2; // intro + pop still playing
 
     // ---- Scroll travel: 0 while the hero is in place, 1 once it has scrolled about a box height up.
     // On the way the K breaks apart (strongest mid-flight), flies to the header logo slot and re-snaps there.
@@ -248,6 +267,9 @@ function Logo({ anchor, theme }: Props) {
       // so it fades in 0.35 s at any frame rate.
       const flash = clamp01(1 - (now - spring.flashAt) / 0.35);
       materials[i].emissiveIntensity = flash * flash * 0.9;
+
+      // Keep drawing while this piece is still moving or glowing.
+      if (flash > 0 || spring.vel.lengthSq() > 25 || spring.pos.distanceToSquared(tmp.target) > 4) busy = true;
     });
 
     // ---- Pop: once assembled, the whole K punches toward the viewer and settles (damped spring).
@@ -258,10 +280,10 @@ function Logo({ anchor, theme }: Props) {
 
     // Intro dolly: the K travels in from depth while the pieces assemble.
     const intro = easeOutCubic(clamp01(t / (POP_AT + 0.2)));
-    const float = Math.sin(now * 1.1) * 0.05 * clamp01(k);
     // Mid-flight the K arcs toward the viewer before landing in the header.
+    // (No idle float: at rest the K must cost zero frames. See on-demand rendering below.)
     const arc = Math.sin(Math.PI * travel) * 2.2;
-    root.current.position.set(baseX, baseY + float * (1 - travel), -3 * (1 - intro) + pop * 0.8 + arc);
+    root.current.position.set(baseX, baseY, -3 * (1 - intro) + pop * 0.8 + arc);
 
     // Idle tilt toward the pointer; a small kick on the pop.
     const settled = clamp01(k / 0.8) * (1 - travel);
@@ -275,6 +297,12 @@ function Logo({ anchor, theme }: Props) {
     // Tiny camera shake on impact.
     camera.position.x = pop * 0.05 * Math.sin(now * 60);
     camera.position.y = pop * 0.05 * Math.cos(now * 55);
+
+    // On-demand rendering: ask for another frame only while something is still moving. At rest: no frames,
+    // no GPU work. Scroll, pointer moves, clicks and resizes wake it up again (see PuzzleLogo3D below).
+    if (busy || Math.abs(targetY - root.current.rotation.y) > 1e-3 || Math.abs(targetX - root.current.rotation.x) > 1e-3) {
+      invalidate();
+    }
   });
 
   return (
@@ -297,11 +325,31 @@ function Logo({ anchor, theme }: Props) {
  * so pieces can fly anywhere on screen. Loaded only on capable desktops (see HeroLogo). Stops rendering when the
  * hero is off-screen.
  */
-export default function PuzzleLogo3D({ anchor, onReady }: { anchor: RefObject<HTMLElement | null>; onReady?: () => void }) {
+export default function PuzzleLogo3D({ anchor, onReady, onSlow }: {
+  anchor: RefObject<HTMLElement | null>;
+  onReady?: () => void;
+  onSlow?: () => void;
+}) {
   const theme = useTheme();
   const [active, setActive] = useState(true);
   // Client-only component (loaded with ssr: false), so document is always available here.
   const [eventSource] = useState<HTMLElement>(() => document.body);
+  const invalidate = useRef<(() => void) | null>(null);
+
+  // On-demand rendering: anything that can move the K requests a frame; the frame loop keeps going only while busy.
+  useEffect(() => {
+    const wake = () => invalidate.current?.();
+    window.addEventListener("scroll", wake, { passive: true });
+    window.addEventListener("resize", wake, { passive: true });
+    document.addEventListener("pointermove", wake, { passive: true });
+    document.addEventListener("click", wake);
+    return () => {
+      window.removeEventListener("scroll", wake);
+      window.removeEventListener("resize", wake);
+      document.removeEventListener("pointermove", wake);
+      document.removeEventListener("click", wake);
+    };
+  }, []);
 
   useEffect(() => {
     const el = anchor.current?.closest("section") ?? anchor.current;
@@ -322,23 +370,28 @@ export default function PuzzleLogo3D({ anchor, onReady }: { anchor: RefObject<HT
     // Hidden while paused: a frozen last frame (pieces mid-flight) must never sit over the sections below.
     <div aria-hidden className={`pointer-events-none fixed inset-0 z-40 ${active ? "visible" : "invisible"}`}>
       <Canvas
-        frameloop={active ? "always" : "never"}
+        // "demand": frames only when something moves (see the end of Logo's useFrame); nothing at rest.
+        frameloop={active ? "demand" : "never"}
         // flat = no tone mapping, so brand colors render exactly.
         flat
-        dpr={[1, 1.5]}
+        // Full-screen canvas: cap the pixel ratio so weak GPUs fill ~30% fewer pixels than at 1.5.
+        dpr={[1, 1.25]}
         camera={{ position: [0, 0, CAMERA_Z], fov: FOV }}
         gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
         // Pointer events come from the whole page, so the canvas never blocks clicks on the hero.
         eventSource={eventSource}
         eventPrefix="client"
-        onCreated={() => onReady?.()}
+        onCreated={(state) => {
+          invalidate.current = state.invalidate;
+          onReady?.();
+        }}
       >
         <StudioEnvironment />
         <ambientLight intensity={0.2} />
         <directionalLight position={[-4, 6, 8]} intensity={1.6} />
         {/* Orange rim light from behind. */}
         <pointLight position={[2, 1, -4]} intensity={40} distance={14} color={COLORS.orange} />
-        <Logo anchor={anchor} theme={theme} />
+        <Logo anchor={anchor} theme={theme} onSlow={onSlow} />
       </Canvas>
     </div>
   );

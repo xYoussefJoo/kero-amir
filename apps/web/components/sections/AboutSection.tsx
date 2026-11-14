@@ -2,7 +2,6 @@ import { getTranslations } from "next-intl/server";
 import { getSettings, setting } from "@/lib/content";
 import type { Locale } from "@/i18n/routing";
 import { PuzzleAssemble } from "@/components/puzzle/PuzzleAssemble";
-import { MagneticTilt } from "@/components/puzzle/MagneticTilt";
 import { SectionHeader } from "@/components/puzzle/SectionHeader";
 import { CountUp } from "@/components/puzzle/CountUp";
 import { pieceStyle } from "@/components/puzzle/scatter";
@@ -32,7 +31,7 @@ export async function AboutSection({ locale }: { locale: Locale }) {
       <div className="grid gap-10 lg:grid-cols-[1.2fr_1fr]">
         {/* Philosophy quote: one piece, accented like the logo's orange blade. */}
         <blockquote className="pz-piece relative border-s-4 border-accent ps-6" style={pieceStyle(3, 2)}>
-          <p className="font-display text-2xl leading-snug sm:text-3xl">
+          <p className="type-quote">
             {setting.text(settings, "about.philosophy")}
           </p>
         </blockquote>
@@ -53,14 +52,14 @@ export async function AboutSection({ locale }: { locale: Locale }) {
         <ul className="grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-4">
           {tiles.map((tile, i) => (
             <li key={tile.label} className="pz-piece" style={pieceStyle(10 + i, 3, 1.4)}>
-              <MagneticTilt>
+              <div>
                 <div className="pz-card flex flex-col gap-2 px-6 pb-6 pt-8">
                   <span className="font-display text-5xl font-semibold text-primary">
                     <CountUp value={tile.value} suffix={tile.suffix} />
                   </span>
                   <span className="text-sm text-muted">{tile.label}</span>
                 </div>
-              </MagneticTilt>
+              </div>
             </li>
           ))}
         </ul>

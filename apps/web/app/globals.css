@@ -42,6 +42,57 @@
   --font-mono: var(--font-jetbrains), ui-monospace, monospace;
 }
 
+/* ---- Typography: one fluid scale for the whole site (Clash Display for display, Inter for reading). */
+body { font-size: 1.0625rem; line-height: 1.6; }
+.type-hero {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(3.4rem, 1.6rem + 7vw, 8.25rem);
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+.type-h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(2.6rem, 1.5rem + 4.6vw, 5.75rem);
+  line-height: 0.96;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+.type-h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.4rem, 1.15rem + 0.8vw, 1.85rem);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+}
+.type-lead {
+  font-size: clamp(1.15rem, 1rem + 0.55vw, 1.45rem);
+  line-height: 1.5;
+  color: var(--muted);
+  max-width: 42ch;
+  text-wrap: pretty;
+}
+.type-label {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+.type-quote {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.6rem, 1.1rem + 1.8vw, 2.75rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+/* Brand selection: orange on ink. */
+::selection { background: var(--accent); color: var(--on-accent); }
+
 /* ---- Hero puzzle logo (2D). Pieces fly in and snap, then the whole K pops out. */
 .puzzle-logo__piece--orange { fill: #ff6535; }
 .puzzle-logo__piece--blue,
@@ -109,12 +160,12 @@ html[data-logo="docked"] .logo-dock { animation: dock-pop 0.55s cubic-bezier(0.3
   top: 0;
   z-index: 30;
   width: 100%;
-  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.3s, box-shadow 0.3s;
+  transition: background-color 0.3s, box-shadow 0.3s;
 }
-.smart-nav[data-hidden="true"]:not([data-open="true"]) { transform: translateY(-100%); }
 .smart-nav[data-scrolled="true"]:not([data-open="true"]) {
-  background: color-mix(in srgb, var(--bg) 78%, transparent);
-  backdrop-filter: blur(14px) saturate(1.4);
+  /* Nearly opaque instead of a live blur: backdrop-filter re-blurs the page under the header on every scroll frame,
+     which is expensive on integrated GPUs. */
+  background: color-mix(in srgb, var(--bg) 94%, transparent);
   box-shadow: 0 10px 30px -22px color-mix(in srgb, var(--text) 60%, transparent);
 }
 .smart-nav__progress {
@@ -134,7 +185,8 @@ html[data-logo="docked"] .logo-dock { animation: dock-pop 0.55s cubic-bezier(0.3
   display: inline-block;
   border-radius: 9999px;
   padding: 0.45rem 0.85rem;
-  font-size: 0.9rem;
+  font-family: var(--font-display);
+  font-size: 0.98rem;
   font-weight: 500;
   color: var(--muted);
   transition: color 0.2s, background-color 0.25s;
@@ -216,11 +268,27 @@ html[data-logo="docked"] .logo-dock { animation: dock-pop 0.55s cubic-bezier(0.3
   .smart-nav, .smart-nav__links li { transition: none; }
 }
 
+
+/* ---- Theme touches: puzzle cut-line paper texture, Bézier dividers, footer. All static. */
+body { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22120%22%3E%3Cpath%20d%3D%22M0%20120%20H48%20C48%20108%2054%20102%2060%20102%20C66%20102%2072%20108%2072%20120%20H120%20M120%200%20V48%20C108%2048%20102%2054%20102%2060%20C102%2066%20108%2072%20120%2072%20V120%22%20fill%3D%22none%22%20stroke%3D%22rgba(14%2C17%2C32%2C0.045)%22%20stroke-width%3D%221%22%2F%3E%3C%2Fsvg%3E"); }
+[data-theme="dark"] body { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22120%22%3E%3Cpath%20d%3D%22M0%20120%20H48%20C48%20108%2054%20102%2060%20102%20C66%20102%2072%20108%2072%20120%20H120%20M120%200%20V48%20C108%2048%20102%2054%20102%2060%20C102%2066%20108%2072%20120%2072%20V120%22%20fill%3D%22none%22%20stroke%3D%22rgba(244%2C240%2C231%2C0.035)%22%20stroke-width%3D%221%22%2F%3E%3C%2Fsvg%3E"); }
+
+.bezier-divider { display: block; width: 100%; height: 3.5rem; overflow: visible; }
+.bezier-divider__curve { fill: none; stroke: color-mix(in srgb, var(--muted) 45%, transparent); stroke-width: 1.5; }
+.bezier-divider__handle { stroke: color-mix(in srgb, var(--primary) 55%, transparent); stroke-width: 1; }
+.bezier-divider__knob { fill: var(--bg); stroke: var(--primary); stroke-width: 1.5; }
+.bezier-divider__anchor { fill: var(--bg); stroke: var(--muted); stroke-width: 1.5; }
+.bezier-divider__anchor--active { fill: var(--accent); stroke: var(--accent); }
+
+.site-footer { margin-top: 4rem; background: var(--text); color: var(--bg); }
+.site-footer__wordmark { color: var(--bg); }
+.site-footer__wordmark::after { content: ""; display: inline-block; width: 0.18em; height: 0.18em; margin-inline-start: 0.08em; border-radius: 9999px; background: var(--accent); }
+
 /* ---- Section puzzle pattern (PuzzleAssemble). Assembled by default; scattered only once JS marks a section away. */
 .pz-piece {
   transition:
-    transform 0.85s cubic-bezier(0.34, 1.56, 0.64, 1) var(--d, 0s),
-    opacity 0.45s ease var(--d, 0s);
+    transform 0.55s cubic-bezier(0.34, 1.4, 0.64, 1) var(--d, 0s),
+    opacity 0.35s ease var(--d, 0s);
 }
 [data-assembled="false"] .pz-piece {
   transform: translate(var(--dx), var(--dy)) rotate(var(--r)) scale(0.86);
@@ -236,8 +304,9 @@ html[data-logo="docked"] .logo-dock { animation: dock-pop 0.55s cubic-bezier(0.3
   transform: perspective(900px) rotateX(calc(var(--my) * -7deg)) rotateY(calc(var(--mx) * 9deg))
     translate(calc(var(--mx) * 6px), calc(var(--my) * 6px));
   transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-  will-change: transform;
 }
+/* A GPU layer only while hovered: permanent will-change on every card keeps a dozen layers in memory. */
+.pz-tilt:hover { will-change: transform; }
 
 /* ---- Puzzle-notch card: a knob on top and a socket cut into the right edge (brand: "every piece fits"). */
 .pz-card {
@@ -283,13 +352,13 @@ html[data-logo="docked"] .logo-dock { animation: dock-pop 0.55s cubic-bezier(0.3
   position: absolute;
   inset: 0;
   transform-style: preserve-3d;
-  animation: orbit-spin 30s linear infinite;
+  animation: orbit-spin 45s linear infinite;
 }
 .orbit__slot { position: absolute; width: 0; height: 0; transform-style: preserve-3d; }
 .orbit__face {
   display: block;
   transform-style: preserve-3d;
-  animation: orbit-face 30s linear infinite;
+  animation: orbit-face 45s linear infinite;
 }
 .orbit__chip {
   display: inline-flex;
@@ -308,8 +377,8 @@ html[data-logo="docked"] .logo-dock { animation: dock-pop 0.55s cubic-bezier(0.3
 .orbit:hover .orbit__ring,
 .orbit:hover .orbit__face { animation-play-state: paused; }
 /* Off-screen (section scattered): stop spinning, no CPU/GPU work for something nobody sees. */
-[data-assembled="false"] .orbit__ring,
-[data-assembled="false"] .orbit__face { animation-play-state: paused; }
+[data-visible="false"] .orbit__ring,
+[data-visible="false"] .orbit__face { animation-play-state: paused; }
 .orbit__chip:hover { scale: 1.18; }
 @keyframes orbit-spin {
   from { transform: rotateX(66deg) rotateZ(0deg); }
@@ -460,33 +529,85 @@ html[data-logo="docked"] .logo-dock { animation: dock-pop 0.55s cubic-bezier(0.3
   .project-card__img, .project-cover { transition: none; }
 }
 
-/* ---- Reviews: two endless bands moving in opposite directions; pause on hover/focus. */
-.ticker {
-  overflow: hidden;
-  mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
-}
-.ticker__track {
-  display: flex;
-  width: max-content;
-  gap: 1.25rem;
-  padding: 1.25rem 0.625rem;
+/* ---- Reviews: "the review puzzle". Interlocking pieces in the brand colours; the last piece is the empty slot.
+   Static (no loops). Knobs reach into the next piece; the wall clips the ones on its outer edges. */
+.review-wall {
+  display: grid;
+  grid-template-columns: 1fr;
   list-style: none;
   margin: 0;
-  animation: ticker var(--duration, 40s) linear infinite;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 1.5rem;
 }
-.ticker[data-reverse] .ticker__track { animation-direction: reverse; }
-.ticker:hover .ticker__track,
-.ticker:focus-within .ticker__track,
-[data-assembled="false"] .ticker__track { animation-play-state: paused; }
-@keyframes ticker { to { transform: translateX(-50%); } }
-.review-card {
+@media (min-width: 768px) { .review-wall { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1024px) { .review-wall { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.review-piece {
+  --piece-bg: var(--surface);
+  --piece-fg: var(--text);
+  position: relative;
+  min-height: 17rem;
+  padding: 2.25rem 2rem 2rem;
+  background: var(--piece-bg);
+  color: var(--piece-fg);
+  transition: box-shadow 0.25s;
+}
+.review-piece::before,
+.review-piece::after { /* knobs: right and bottom, same colour as the piece */
+  content: "";
+  position: absolute;
+  z-index: 2;
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 9999px;
+  background: var(--piece-bg);
+  transition: scale 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.review-piece::after { inset-inline-end: -1.05rem; inset-block-start: calc(50% - 1.05rem); }
+.review-piece::before { inset-block-end: -1.05rem; inset-inline-start: calc(50% - 1.05rem); }
+.review-piece:hover { box-shadow: inset 0 0 0 3px var(--accent); }
+.review-piece:hover::before, .review-piece:hover::after { scale: 1.12; }
+.review-piece--blue { --piece-bg: var(--primary); --piece-fg: var(--on-primary); }
+.review-piece--ink { --piece-bg: var(--text); --piece-fg: var(--bg); }
+.review-piece--orange { --piece-bg: var(--accent); --piece-fg: var(--on-accent); }
+.review-piece--orange:hover { box-shadow: inset 0 0 0 3px var(--text); }
+.review-piece__stars { color: var(--accent); letter-spacing: 0.1em; }
+.review-piece--orange .review-piece__stars { color: var(--on-accent); }
+.review-piece__text { font-size: 1.05rem; line-height: 1.55; }
+
+/* The missing piece: an empty dashed slot that opens the review form. */
+.review-piece--slot { background: transparent; padding: 1rem; }
+.review-piece--slot::before, .review-piece--slot::after { display: none; }
+.review-piece--slot:hover { box-shadow: none; }
+.review-slot {
   display: flex;
-  width: 22rem;
-  min-height: 13rem;
+  width: 100%;
+  height: 100%;
+  min-height: 15rem;
   flex-direction: column;
-  gap: 0.75rem;
-  padding: 1.75rem 1.5rem 1.4rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 1rem;
+  border: 2px dashed color-mix(in srgb, var(--muted) 55%, transparent);
+  color: var(--text);
+  text-align: center;
+  transition: border-color 0.2s, background-color 0.2s;
 }
+.review-slot:hover { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
+.review-slot__plus {
+  display: grid;
+  width: 3rem;
+  height: 3rem;
+  place-items: center;
+  border-radius: 9999px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: 1.6rem;
+  font-weight: 600;
+  transition: scale 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.review-slot:hover .review-slot__plus { scale: 1.12; }
 
 /* ---- Forms (reviews dialog, contact). */
 .form-input {
@@ -524,7 +645,6 @@ html[data-logo="docked"] .logo-dock { animation: dock-pop 0.55s cubic-bezier(0.3
   100% { transform: none; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .ticker__track { animation: none; }
   .review-dialog[open], #contact[data-sent] .missing-piece__fill { animation: none; }
 }
 

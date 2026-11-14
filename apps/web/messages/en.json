@@ -123,6 +123,13 @@
         "rateLimited": "Too many submissions. Please try again in a few minutes.",
         "unavailable": "Could not send right now. Please try again later."
       }
-    }
+    },
+    "slotTitle": "Your piece goes here",
+    "slotText": "Worked with Kero? Leave a review."
+  },
+  "Footer": {
+    "wordmark": "Every piece fits",
+    "top": "Back to top",
+    "rights": "All rights reserved."
   }
 }

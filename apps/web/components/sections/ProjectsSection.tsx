@@ -34,7 +34,7 @@ export async function ProjectsSection({ locale }: { locale: Locale }) {
             <p className="font-mono text-[0.7rem] tracking-[0.15em] text-muted">
               {project.categories.map((c) => c.name.toUpperCase()).join(" · ")}
             </p>
-            <h3 className="font-display text-xl font-semibold leading-snug sm:text-2xl">{project.title}</h3>
+            <h3 className="type-h3">{project.title}</h3>
             <p className="project-card__summary text-sm text-muted">{project.summary}</p>
             <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-2">
               <ul className="flex flex-wrap gap-1.5">

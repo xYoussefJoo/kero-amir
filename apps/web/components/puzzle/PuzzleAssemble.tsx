@@ -3,8 +3,8 @@
 import { useEffect, useRef, type ElementType, type ReactNode } from "react";
 
 /**
- * The hero's pattern for every section: children marked `.pz-piece` sit scattered while the section is away
- * and snap together when it scrolls into view; scrolling away scatters them again (reversible).
+ * The hero's pattern for every section: children marked `.pz-piece` start scattered and snap together the first time
+ * the section scrolls into view, then stay assembled (calm: no re-scatter on every pass).
  * Without JS (or before hydration) everything is simply assembled, so content is never hidden from crawlers.
  */
 export function PuzzleAssemble({
@@ -25,9 +25,17 @@ export function PuzzleAssemble({
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let assembled = false;
     const observer = new IntersectionObserver(
-      ([entry]) => el.setAttribute("data-assembled", String(entry.isIntersecting)),
+      ([entry]) => {
+        // data-visible: lets looping animations (orbit) pause off-screen.
+        el.setAttribute("data-visible", String(entry.isIntersecting));
+        // data-assembled: false only until the first time the section is seen; then it stays assembled.
+        if (reduced || assembled) return;
+        assembled = entry.isIntersecting;
+        el.setAttribute("data-assembled", String(entry.isIntersecting));
+      },
       { threshold },
     );
     observer.observe(el);

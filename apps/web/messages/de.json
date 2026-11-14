@@ -123,6 +123,13 @@
         "rateLimited": "Zu viele Einsendungen. Bitte versuche es in ein paar Minuten erneut.",
         "unavailable": "Senden gerade nicht möglich. Bitte später erneut versuchen."
       }
-    }
+    },
+    "slotTitle": "Hier passt dein Teil",
+    "slotText": "Mit Kero gearbeitet? Hinterlasse eine Bewertung."
+  },
+  "Footer": {
+    "wordmark": "Jedes Teil passt",
+    "top": "Nach oben",
+    "rights": "Alle Rechte vorbehalten."
   }
 }

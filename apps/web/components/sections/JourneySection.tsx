@@ -2,7 +2,6 @@ import { getFormatter, getTranslations } from "next-intl/server";
 import { getTimeline } from "@/lib/content";
 import type { Locale } from "@/i18n/routing";
 import { PuzzleAssemble } from "@/components/puzzle/PuzzleAssemble";
-import { MagneticTilt } from "@/components/puzzle/MagneticTilt";
 import { SectionHeader } from "@/components/puzzle/SectionHeader";
 import { pieceStyle } from "@/components/puzzle/scatter";
 import { JourneyLine } from "./JourneyLine";
@@ -28,7 +27,7 @@ export async function JourneySection({ locale }: { locale: Locale }) {
         {entries.map((entry, i) => (
           <li key={entry.id} className="journey__entry pz-piece" style={pieceStyle(3 + i, 5, 1.2)}>
             <span data-node className="journey__node" aria-hidden />
-            <MagneticTilt className="journey__card">
+            <div className="journey__card">
               <article className="pz-card flex flex-col gap-2 px-6 pb-6 pt-8">
                 <p className="font-mono text-xs tracking-[0.15em] text-muted">
                   {span(entry.startDate, entry.endDate)}
@@ -36,7 +35,7 @@ export async function JourneySection({ locale }: { locale: Locale }) {
                     {t(`kind.${entry.kind as "Work" | "Education" | "Award" | "Milestone"}`)}
                   </span>
                 </p>
-                <h3 className="font-display text-xl font-semibold leading-snug">{entry.title}</h3>
+                <h3 className="type-h3">{entry.title}</h3>
                 {(entry.organization || entry.location) && (
                   <p className="text-sm font-medium text-primary">
                     {[entry.organization, entry.location].filter(Boolean).join(" · ")}
@@ -44,7 +43,7 @@ export async function JourneySection({ locale }: { locale: Locale }) {
                 )}
                 {entry.description && <p className="text-sm text-muted">{entry.description}</p>}
               </article>
-            </MagneticTilt>
+            </div>
           </li>
         ))}
       </JourneyLine>
