@@ -116,3 +116,15 @@ Newest at the bottom. Format: date, decision, why.
       Done with one scroll-derived value per frame, not GSAP, since nothing else needs a timeline yet.
     - Interactive: pieces are pushed by the pointer (magnet) and spring back; a click bursts the K and it re-snaps.
     - All effects drive per-piece damped springs; flashes are dated to landing times (frame-rate independent).
+48. **One puzzle language for every section** (pulled forward from Phase 4): `PuzzleAssemble` scatters a section's
+    `.pz-piece`s while it is off-screen and snaps them in (staggered back-out ease) when it arrives, reversibly;
+    `MagneticTilt` leans cards toward the pointer; `.pz-card` adds the logo's knob and socket. Pure CSS transitions
+    driven by one IntersectionObserver per section: no extra libraries, no WebGL outside the hero.
+    About (stats count up), Toolkit (tools orbit the K on a CSS 3D ring), Work (discipline tiles), Journey
+    (scroll-scrubbed pencil line, nodes fill when reached), Contact (the missing piece snaps into its slot).
+    Without JS, or with reduced motion, everything renders assembled.
+49. **The hero K docks into the header on scroll:** it breaks apart mid-flight, arcs to the sticky header's logo slot
+    and re-snaps there; the header logo then takes over and the 3D canvas pauses. Scrolling up reverses it.
+50. **Section data comes from the API through `"use cache"` loaders** tagged like the API's output cache (`settings`,
+    `skills`, `tools`, `timeline`, `categories`), `cacheLife("hours")`; an unreachable API renders empty sections
+    instead of failing the page. The contact CTA appears once `contact.email` (or socials) is set in the CMS.

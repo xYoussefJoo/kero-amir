@@ -5,6 +5,9 @@ import type { Locale } from "@/i18n/routing";
 import { HeroLogo } from "@/components/hero/HeroLogo";
 import { AboutSection } from "@/components/sections/AboutSection";
 import { ToolkitSection } from "@/components/sections/ToolkitSection";
+import { JourneySection } from "@/components/sections/JourneySection";
+import { WorkSection } from "@/components/sections/WorkSection";
+import { ContactSection } from "@/components/sections/ContactSection";
 
 // Hero with the puzzle K. Texts move to CMS settings when the public site is built out (Phase 4).
 export default function HomePage({ params }: PageProps<"/[locale]">) {
@@ -43,17 +46,10 @@ export default function HomePage({ params }: PageProps<"/[locale]">) {
       </section>
       <AboutSection locale={locale as Locale} />
       <ToolkitSection locale={locale as Locale} />
-      <WorkPlaceholder label={t("workLabel")} title={t("workTitle")} />
+      <WorkSection locale={locale as Locale} />
+      <JourneySection locale={locale as Locale} />
+      <ContactSection locale={locale as Locale} />
     </>
   );
 }
 
-// Placeholder target for "See the work"; the projects grid fills it in Phase 4.
-function WorkPlaceholder({ label, title }: { label: string; title: string }) {
-  return (
-    <section id="work" className="mx-auto flex min-h-[80vh] w-full max-w-6xl flex-col justify-center gap-4 px-4 sm:px-6">
-      <p className="font-mono text-xs tracking-[0.2em] text-muted">{label}</p>
-      <h2 className="font-display text-4xl font-semibold tracking-tight sm:text-6xl">{title}</h2>
-    </section>
-  );
-}

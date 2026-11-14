@@ -27,6 +27,11 @@ const clamp01 = (x: number) => Math.min(1, Math.max(0, x));
 /** Overshoots then settles, like a piece clicking into place. */
 const easeOutBack = (x: number) => 1 + 2.4 * (x - 1) ** 3 + 1.4 * (x - 1) ** 2;
 const easeOutCubic = (x: number) => 1 - (1 - x) ** 3;
+const easeInOutCubic = (x: number) => (x < 0.5 ? 4 * x ** 3 : 1 - (-2 * x + 2) ** 3 / 2);
+const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+
+/** Header logo slot the K flies into on scroll (see SiteHeader). */
+const DOCK_SELECTOR = "[data-logo-dock]";
 
 type Theme = "light" | "dark";
 
@@ -91,6 +96,8 @@ function Logo({ anchor, theme }: Props) {
   const start = useRef<number | null>(null);
   const burstAt = useRef(-Infinity);
   const burstHandled = useRef(-Infinity);
+  const prevTravel = useRef(0);
+  const logoState = useRef<"flying" | "docked" | null>(null);
   const { camera, size, pointer } = useThree();
 
   // One material per piece so each can flash on its own when it snaps in.
@@ -143,15 +150,33 @@ function Logo({ anchor, theme }: Props) {
     const box = anchor.current?.getBoundingClientRect();
     if (!root.current || !box) return;
 
-    // ---- Align: world units per CSS pixel at z = 0, then place and size the K over its hero box.
-    const worldPerPx = (2 * CAMERA_Z * Math.tan((FOV / 2) * DEG)) / size.height;
-    const scale = (box.height * worldPerPx) / LOGO_VIEWBOX.height;
-    const baseX = (box.left + box.width / 2 - size.width / 2) * worldPerPx;
-    const baseY = -(box.top + box.height / 2 - size.height / 2) * worldPerPx;
+    // ---- Scroll travel: 0 while the hero is in place, 1 once it has scrolled about a box height up.
+    // On the way the K breaks apart (strongest mid-flight), flies to the header logo slot and re-snaps there.
+    const dockBox = document.querySelector(DOCK_SELECTOR)?.getBoundingClientRect();
+    const travel = dockBox ? clamp01(-box.top / (box.height * 0.95)) : 0;
+    const flight = easeInOutCubic(travel);
+    const explode = Math.sin(Math.PI * clamp01(travel / 0.85)) * 1.15;
 
-    // ---- Scroll: 0 while the hero is in place, 1 once it has scrolled about a box height up.
-    const scroll = clamp01(-box.top / (box.height * 1.1) + 0.15);
-    const explode = scroll * scroll;
+    // ---- Align: world units per CSS pixel at z = 0; place and size the K between its hero box and the dock.
+    const worldPerPx = (2 * CAMERA_Z * Math.tan((FOV / 2) * DEG)) / size.height;
+    const toX = (px: number) => (px - size.width / 2) * worldPerPx;
+    const toY = (px: number) => -(px - size.height / 2) * worldPerPx;
+    const heroScale = (box.height * worldPerPx) / LOGO_VIEWBOX.height;
+    const dockScale = dockBox ? (dockBox.height * worldPerPx) / LOGO_VIEWBOX.height : heroScale;
+    const scale = lerp(heroScale, dockScale, flight);
+    const baseX = lerp(toX(box.left + box.width / 2), dockBox ? toX(dockBox.left + dockBox.width / 2) : 0, flight);
+    const baseY = lerp(toY(box.top + box.height / 2), dockBox ? toY(dockBox.top + dockBox.height / 2) : 0, flight);
+
+    // Arrival: pieces flash as they lock together in the header; then the header's own logo takes over.
+    if (prevTravel.current < 0.85 && travel >= 0.85) springs.forEach((spring) => { spring.flashAt = now; });
+    prevTravel.current = travel;
+    const docked = travel >= 0.999;
+    root.current.visible = !docked;
+    const nextState = docked ? "docked" : "flying";
+    if (logoState.current !== nextState) {
+      logoState.current = nextState;
+      document.documentElement.dataset.logo = nextState;
+    }
 
     // ---- Pointer in logo space (viewBox units), for the magnet effect.
     const pointerX = ((pointer.x * size.width) / 2) * worldPerPx;
@@ -186,7 +211,7 @@ function Logo({ anchor, theme }: Props) {
       const dy = piece.cy - localPY;
       const dist = Math.hypot(dx, dy);
       const reach = 520;
-      if (dist < reach && p >= 1 && explode < 0.05) {
+      if (dist < reach && p >= 1 && travel < 0.03) {
         const push = (1 - dist / reach) ** 2 * 110;
         tmp.target.x += (dx / (dist || 1)) * push;
         tmp.target.y += (dy / (dist || 1)) * push;
@@ -234,11 +259,14 @@ function Logo({ anchor, theme }: Props) {
     // Intro dolly: the K travels in from depth while the pieces assemble.
     const intro = easeOutCubic(clamp01(t / (POP_AT + 0.2)));
     const float = Math.sin(now * 1.1) * 0.05 * clamp01(k);
-    root.current.position.set(baseX, baseY + float, -3 * (1 - intro) + pop * 0.8);
+    // Mid-flight the K arcs toward the viewer before landing in the header.
+    const arc = Math.sin(Math.PI * travel) * 2.2;
+    root.current.position.set(baseX, baseY + float * (1 - travel), -3 * (1 - intro) + pop * 0.8 + arc);
 
     // Idle tilt toward the pointer; a small kick on the pop.
-    const settled = clamp01(k / 0.8) * (1 - explode);
-    const targetY = pointer.x * 0.4 * settled + pop * 0.15;
+    const settled = clamp01(k / 0.8) * (1 - travel);
+    // Plus a spin while it flies to the header.
+    const targetY = pointer.x * 0.4 * settled + pop * 0.15 + Math.sin(Math.PI * travel) * 1.6;
     const targetX = -pointer.y * 0.28 * settled;
     root.current.rotation.y += (targetY - root.current.rotation.y) * 0.08;
     root.current.rotation.x += (targetX - root.current.rotation.x) * 0.08;
@@ -278,14 +306,21 @@ export default function PuzzleLogo3D({ anchor, onReady }: { anchor: RefObject<HT
   useEffect(() => {
     const el = anchor.current?.closest("section") ?? anchor.current;
     if (!el) return;
-    const observer = new IntersectionObserver(([entry]) => setActive(entry.isIntersecting), { rootMargin: "200px" });
+    const observer = new IntersectionObserver(([entry]) => {
+      setActive(entry.isIntersecting);
+      // Paused canvas: the header shows its own logo (the K is "docked").
+      if (!entry.isIntersecting) document.documentElement.dataset.logo = "docked";
+    }, { rootMargin: "200px" });
     observer.observe(el);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      delete document.documentElement.dataset.logo;
+    };
   }, [anchor]);
 
   return (
     // Hidden while paused: a frozen last frame (pieces mid-flight) must never sit over the sections below.
-    <div aria-hidden className={`pointer-events-none fixed inset-0 z-10 ${active ? "visible" : "invisible"}`}>
+    <div aria-hidden className={`pointer-events-none fixed inset-0 z-40 ${active ? "visible" : "invisible"}`}>
       <Canvas
         frameloop={active ? "always" : "never"}
         // flat = no tone mapping, so brand colors render exactly.

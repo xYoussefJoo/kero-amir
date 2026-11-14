@@ -16,9 +16,7 @@
     "title": "Jedes Teil passt.",
     "subtitle": "Markenidentität, Verpackung, 3D und Motion für Marken, die in Erinnerung bleiben wollen.",
     "ctaWork": "Arbeiten ansehen",
-    "ctaContact": "Projekt starten",
-    "workLabel": "04 // AUSGEWÄHLTE ARBEITEN",
-    "workTitle": "Ausgewählte Arbeiten folgen in Kürze."
+    "ctaContact": "Projekt starten"
   },
   "About": {
     "label": "02 // ÜBER MICH",
@@ -33,5 +31,29 @@
     "title": "Adobe-Meisterschaft, Stück für Stück",
     "intro": "Die Werkzeuge hinter jeder Identität, Verpackung und Kampagne. Fahre über den Orbit, um ihn anzuhalten.",
     "orbitLabel": "Wichtigste Werkzeuge"
+  },
+  "Journey": {
+    "label": "05 // WERDEGANG",
+    "title": "Drei Jahre, vier Länder",
+    "intro": "Von Ägypten bis Deutschland und Frankreich: scrolle, um die Linie zu zeichnen.",
+    "present": "Heute",
+    "kind": {
+      "Work": "Beruf",
+      "Education": "Ausbildung",
+      "Award": "Auszeichnung",
+      "Milestone": "Meilenstein"
+    }
+  },
+  "Work": {
+    "label": "04 // AUSGEWÄHLTE ARBEITEN",
+    "title": "Vier Disziplinen, ein System",
+    "intro": "Markenidentität, Verpackung, Kampagnen und Print. Fallstudien folgen.",
+    "soon": "Fallstudien folgen"
+  },
+  "Contact": {
+    "label": "06 // KONTAKT",
+    "title": "Dein Projekt ist das fehlende Teil.",
+    "intro": "Erzähl mir von deiner Marke, deinem Produkt oder deiner Kampagne, und lass uns jedes Teil passend machen.",
+    "cta": "Projekt starten"
   }
 }

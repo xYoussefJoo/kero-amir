@@ -16,9 +16,7 @@
     "title": "Every piece fits.",
     "subtitle": "Brand identity, packaging, 3D and motion for brands that want to be remembered.",
     "ctaWork": "See the work",
-    "ctaContact": "Start a project",
-    "workLabel": "04 // SELECTED WORK",
-    "workTitle": "Selected work is on its way."
+    "ctaContact": "Start a project"
   },
   "About": {
     "label": "02 // ABOUT",
@@ -33,5 +31,29 @@
     "title": "Adobe mastery, piece by piece",
     "intro": "The tools behind every identity, package and campaign. Hover the orbit to stop it.",
     "orbitLabel": "Main tools"
+  },
+  "Journey": {
+    "label": "05 // JOURNEY",
+    "title": "Three years, four countries",
+    "intro": "From Egypt to Germany and France: scroll to draw the line.",
+    "present": "Present",
+    "kind": {
+      "Work": "Work",
+      "Education": "Education",
+      "Award": "Award",
+      "Milestone": "Milestone"
+    }
+  },
+  "Work": {
+    "label": "04 // SELECTED WORK",
+    "title": "Four disciplines, one system",
+    "intro": "Brand identity, packaging, campaigns and print. Case studies are being added.",
+    "soon": "Case studies soon"
+  },
+  "Contact": {
+    "label": "06 // CONTACT",
+    "title": "Your project is the missing piece.",
+    "intro": "Tell me about your brand, product or campaign, and let's make every piece fit.",
+    "cta": "Start a project"
   }
 }
