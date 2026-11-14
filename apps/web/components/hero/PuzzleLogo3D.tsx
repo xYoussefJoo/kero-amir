@@ -284,7 +284,8 @@ export default function PuzzleLogo3D({ anchor, onReady }: { anchor: RefObject<HT
   }, [anchor]);
 
   return (
-    <div aria-hidden className="pointer-events-none fixed inset-0 z-10">
+    // Hidden while paused: a frozen last frame (pieces mid-flight) must never sit over the sections below.
+    <div aria-hidden className={`pointer-events-none fixed inset-0 z-10 ${active ? "visible" : "invisible"}`}>
       <Canvas
         frameloop={active ? "always" : "never"}
         // flat = no tone mapping, so brand colors render exactly.

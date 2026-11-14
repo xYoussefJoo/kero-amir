@@ -3,6 +3,8 @@ import { setRequestLocale } from "next-intl/server";
 import { use } from "react";
 import type { Locale } from "@/i18n/routing";
 import { HeroLogo } from "@/components/hero/HeroLogo";
+import { AboutSection } from "@/components/sections/AboutSection";
+import { ToolkitSection } from "@/components/sections/ToolkitSection";
 
 // Hero with the puzzle K. Texts move to CMS settings when the public site is built out (Phase 4).
 export default function HomePage({ params }: PageProps<"/[locale]">) {
@@ -39,6 +41,8 @@ export default function HomePage({ params }: PageProps<"/[locale]">) {
           <HeroLogo />
         </div>
       </section>
+      <AboutSection locale={locale as Locale} />
+      <ToolkitSection locale={locale as Locale} />
       <WorkPlaceholder label={t("workLabel")} title={t("workTitle")} />
     </>
   );

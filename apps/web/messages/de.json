@@ -17,7 +17,21 @@
     "subtitle": "Markenidentität, Verpackung, 3D und Motion für Marken, die in Erinnerung bleiben wollen.",
     "ctaWork": "Arbeiten ansehen",
     "ctaContact": "Projekt starten",
-    "workLabel": "02 // AUSGEWÄHLTE ARBEITEN",
+    "workLabel": "04 // AUSGEWÄHLTE ARBEITEN",
     "workTitle": "Ausgewählte Arbeiten folgen in Kürze."
+  },
+  "About": {
+    "label": "02 // ÜBER MICH",
+    "fallbackTitle": "Ideen in unvergessliche Ästhetik verwandeln",
+    "statYears": "Jahre Erfahrung",
+    "statProjects": "Abgeschlossene Projekte",
+    "statCountries": "Länder",
+    "statSatisfaction": "Kundenzufriedenheit"
+  },
+  "Toolkit": {
+    "label": "03 // TOOLKIT",
+    "title": "Adobe-Meisterschaft, Stück für Stück",
+    "intro": "Die Werkzeuge hinter jeder Identität, Verpackung und Kampagne. Fahre über den Orbit, um ihn anzuhalten.",
+    "orbitLabel": "Wichtigste Werkzeuge"
   }
 }

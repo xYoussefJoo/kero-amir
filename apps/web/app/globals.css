@@ -91,6 +91,115 @@
   .puzzle-logo__piece, .puzzle-logo__pop, .hero-glow { animation: none; }
 }
 
+/* ---- Section puzzle pattern (PuzzleAssemble). Assembled by default; scattered only once JS marks a section away. */
+.pz-piece {
+  transition:
+    transform 0.85s cubic-bezier(0.34, 1.56, 0.64, 1) var(--d, 0s),
+    opacity 0.45s ease var(--d, 0s);
+}
+[data-assembled="false"] .pz-piece {
+  transform: translate(var(--dx), var(--dy)) rotate(var(--r)) scale(0.86);
+  opacity: 0;
+  transition-duration: 0.5s, 0.3s;
+  transition-delay: 0s; /* scatter quickly, assemble with the stagger */
+}
+
+/* ---- MagneticTilt: leans toward the pointer, springs back on leave. */
+.pz-tilt {
+  --mx: 0;
+  --my: 0;
+  transform: perspective(900px) rotateX(calc(var(--my) * -7deg)) rotateY(calc(var(--mx) * 9deg))
+    translate(calc(var(--mx) * 6px), calc(var(--my) * 6px));
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform;
+}
+
+/* ---- Puzzle-notch card: a knob on top and a socket cut into the right edge (brand: "every piece fits"). */
+.pz-card {
+  position: relative;
+  border-radius: 1.25rem;
+  background: var(--surface);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--text) 6%, transparent), 0 12px 32px -18px color-mix(in srgb, var(--text) 30%, transparent);
+}
+.pz-card::before,
+.pz-card::after {
+  content: "";
+  position: absolute;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 9999px;
+}
+.pz-card::before { /* knob */
+  inset-block-start: -0.85rem;
+  inset-inline-start: calc(50% - 0.875rem);
+  background: var(--surface);
+}
+.pz-card::after { /* socket */
+  inset-block-start: calc(50% - 0.875rem);
+  inset-inline-end: -0.85rem;
+  background: var(--bg);
+}
+
+/* ---- Skill level bars: fill when the section assembles, empty when it scatters. */
+.pz-bar {
+  transform-origin: left center;
+  transform: scaleX(var(--lvl, 1));
+  transition: transform 1s cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0s);
+}
+[dir="rtl"] .pz-bar { transform-origin: right center; }
+[data-assembled="false"] .pz-bar { transform: scaleX(0); transition-delay: 0s; }
+
+/* ---- Toolkit orbit: a tilted ring spins; each chip counter-rotates so it always faces the viewer.
+   preserve-3d lets chips pass behind and in front of the K, like the swoosh in the logo. */
+.orbit { perspective: 1100px; }
+.orbit__stage { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; }
+.orbit__logo { position: absolute; inset: 22% 27%; width: 46%; height: 56%; transform: translateZ(0); }
+.orbit__ring {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  animation: orbit-spin 30s linear infinite;
+}
+.orbit__slot { position: absolute; width: 0; height: 0; transform-style: preserve-3d; }
+.orbit__face {
+  display: block;
+  transform-style: preserve-3d;
+  animation: orbit-face 30s linear infinite;
+}
+.orbit__chip {
+  display: inline-flex;
+  translate: -50% -50%;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  border-radius: 9999px;
+  background: var(--surface);
+  padding: 0.45rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: 0 10px 24px -14px color-mix(in srgb, var(--text) 45%, transparent);
+  transition: scale 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.orbit:hover .orbit__ring,
+.orbit:hover .orbit__face { animation-play-state: paused; }
+.orbit__chip:hover { scale: 1.18; }
+@keyframes orbit-spin {
+  from { transform: rotateX(66deg) rotateZ(0deg); }
+  to { transform: rotateX(66deg) rotateZ(360deg); }
+}
+@keyframes orbit-face {
+  from { transform: rotateZ(0deg) rotateX(-66deg); }
+  to { transform: rotateZ(-360deg) rotateX(-66deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pz-piece, .pz-tilt { transition: none; transform: none; }
+  .pz-bar { transition: none; }
+  .orbit__ring, .orbit__face { animation: none; }
+  .orbit__ring { transform: rotateX(66deg); }
+  .orbit__face { transform: rotateX(-66deg); }
+}
+
 @layer base {
   body {
     background: var(--bg);

@@ -17,7 +17,21 @@
     "subtitle": "Brand identity, packaging, 3D and motion for brands that want to be remembered.",
     "ctaWork": "See the work",
     "ctaContact": "Start a project",
-    "workLabel": "02 // SELECTED WORK",
+    "workLabel": "04 // SELECTED WORK",
     "workTitle": "Selected work is on its way."
+  },
+  "About": {
+    "label": "02 // ABOUT",
+    "fallbackTitle": "Transforming ideas into unforgettable aesthetics",
+    "statYears": "Years of experience",
+    "statProjects": "Projects delivered",
+    "statCountries": "Countries served",
+    "statSatisfaction": "Client satisfaction"
+  },
+  "Toolkit": {
+    "label": "03 // TOOLKIT",
+    "title": "Adobe mastery, piece by piece",
+    "intro": "The tools behind every identity, package and campaign. Hover the orbit to stop it.",
+    "orbitLabel": "Main tools"
   }
 }
