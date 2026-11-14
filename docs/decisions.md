@@ -168,3 +168,27 @@ Newest at the bottom. Format: date, decision, why.
 63. **Public forms go through `/api/forms/[form]`** (allow-list: testimonial, contact; same-origin check), which
     forwards the visitor IP + `FORWARDING_SECRET` so the API rate-limits per visitor. Client zod schemas mirror the
     API validators; the API stays the source of truth.
+64. **Navbar is always visible** (owner's request); the hide-on-scroll from #60 is gone. Opaque header background
+    instead of backdrop blur (blur re-renders on every scroll frame).
+65. **Type scale:** `.type-hero/.type-h2/.type-h3/.type-lead/.type-label/.type-quote` in globals.css; Clash Display
+    for headings and nav, body 17 px.
+66. **Motion diet:** sections assemble once (first time they're seen), smaller scatter, tilt only on project cards,
+    3D logo renders on demand (no idle frames) and falls back to 2D for the visit if intro frames exceed 25 ms.
+67. **Reviews are a puzzle wall** (replaces the ticker in #62): approved reviews as jigsaw pieces in the brand
+    colours, the last piece is an empty slot that opens the review form. No looping animation.
+68. **Theme:** pen-tool Bézier dividers between sections, a faint puzzle cut-line texture on the page, ink footer with
+    the "Every piece fits." wordmark.
+69. **Security headers:** web sets CSP (self-only; `'unsafe-inline'` for the theme script and Next bootstrap), HSTS,
+    nosniff, X-Frame-Options DENY, Referrer-Policy, Permissions-Policy, no `X-Powered-By`. API sets nosniff, DENY,
+    `default-src 'none'` CSP, no-referrer; HSTS + 308 HTTPS redirect outside Development; IIS/Kestrel `Server` and
+    `X-Powered-By` removed (web.config). Zod runs jitless so the CSP needs no `unsafe-eval`.
+70. **OpenAPI is served only in Development** (it feeds the generated web types; production doesn't advertise it).
+71. **SEO:** `robots.txt` (admin and api disallowed), `sitemap.xml` with hreflang, Open Graph/Twitter cards with a
+    build-time 1200×630 image, theme-color per scheme.
+72. **API reads from the site:** 8 s timeout, one retry for GETs (the first call often wakes a cold host). A failed
+    read throws inside the cached function, so failures are never cached; sections fall back to empty data.
+73. **Keep the API warm:** MonsterASP stops the app pool when idle (cold start ≈ 15 s). Ping
+    `/api/v1/health/live` every 5 minutes with a free uptime monitor (e.g. UptimeRobot); this also gives downtime
+    alerts.
+74. Accepted: 7 "moderate" `npm audit` findings are one minimatch advisory nested in ESLint's TypeScript parser
+    (dev-only, matches only our own globs, never shipped). Revisit when typescript-eslint updates it.

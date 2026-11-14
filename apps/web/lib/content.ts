@@ -8,79 +8,93 @@ export type SkillGroup = components["schemas"]["SkillGroupDto"];
 export type Tool = components["schemas"]["ToolDto"];
 export type TimelineEntry = components["schemas"]["TimelineEntryDto"];
 export type Category = components["schemas"]["CategoryDto"];
+export type ProjectCard = components["schemas"]["ProjectCardDto"];
+export type Testimonial = components["schemas"]["TestimonialDto"];
 export type Settings = Record<string, unknown>;
 
-/**
+/*
  * Public content for the site, read on the server and cached per locale.
  * Tags match the API's cache tags, so /api/revalidate can refresh exactly what an admin edited.
- * If the API is unreachable the section renders with empty data instead of failing the page.
+ *
+ * The cached readers throw when the API fails, so a failure is never cached: the next request tries again.
+ * The exported getters catch it and render the section with empty data instead of failing the page.
  */
-async function load<T>(fetcher: () => Promise<{ data?: T }>, fallback: T): Promise<T> {
+
+/** Unwraps an openapi-fetch result; an error status throws (openapi-fetch itself only throws on network errors). */
+async function ok<T>(call: Promise<{ data?: T; response: Response }>): Promise<T> {
+  const { data, response } = await call;
+  if (!response.ok || data === undefined) throw new Error(`API ${response.status} ${response.url}`);
+  return data;
+}
+
+async function orFallback<T>(read: Promise<T>, fallback: T): Promise<T> {
   try {
-    const { data } = await fetcher();
-    return data ?? fallback;
-  } catch {
+    return await read;
+  } catch (error) {
+    console.error("[content]", error instanceof Error ? error.message : error);
     return fallback;
   }
 }
 
-export async function getSettings(locale: Locale): Promise<Settings> {
+async function readSettings(locale: Locale): Promise<Settings> {
   "use cache";
   cacheTag("settings");
   cacheLife("hours");
-  return load(() => api.GET("/api/v1/settings", { params: { query: { locale } } }) as Promise<{ data?: Settings }>, {});
+  return ok(api.GET("/api/v1/settings", { params: { query: { locale } } }) as Promise<{ data?: Settings; response: Response }>);
 }
 
-export async function getSkills(locale: Locale): Promise<SkillGroup[]> {
+async function readSkills(locale: Locale): Promise<SkillGroup[]> {
   "use cache";
   cacheTag("skills");
   cacheLife("hours");
-  return load(() => api.GET("/api/v1/skills", { params: { query: { locale } } }), []);
+  return ok(api.GET("/api/v1/skills", { params: { query: { locale } } }));
 }
 
-export async function getTools(): Promise<Tool[]> {
+async function readTools(): Promise<Tool[]> {
   "use cache";
   cacheTag("tools");
   cacheLife("hours");
-  return load(() => api.GET("/api/v1/tools"), []);
+  return ok(api.GET("/api/v1/tools"));
 }
 
-export async function getTimeline(locale: Locale): Promise<TimelineEntry[]> {
+async function readTimeline(locale: Locale): Promise<TimelineEntry[]> {
   "use cache";
   cacheTag("timeline");
   cacheLife("hours");
-  return load(() => api.GET("/api/v1/timeline", { params: { query: { locale } } }), []);
+  return ok(api.GET("/api/v1/timeline", { params: { query: { locale } } }));
 }
 
-export async function getCategories(locale: Locale): Promise<Category[]> {
+async function readCategories(locale: Locale): Promise<Category[]> {
   "use cache";
   cacheTag("categories");
   cacheLife("hours");
-  return load(() => api.GET("/api/v1/categories", { params: { query: { locale } } }), []);
+  return ok(api.GET("/api/v1/categories", { params: { query: { locale } } }));
 }
 
-export type ProjectCard = components["schemas"]["ProjectCardDto"];
-export type Testimonial = components["schemas"]["TestimonialDto"];
-
-/** Published projects for the grid (first page of 24; featured first). */
-export async function getProjects(locale: Locale): Promise<ProjectCard[]> {
+/** First page of 24 published projects (featured first). */
+async function readProjects(locale: Locale): Promise<ProjectCard[]> {
   "use cache";
   cacheTag("projects");
   cacheLife("hours");
-  const page = await load(
-    () => api.GET("/api/v1/projects", { params: { query: { locale, page: 1, pageSize: 24 } } }),
-    undefined,
-  );
-  return page?.items ?? [];
+  const page = await ok(api.GET("/api/v1/projects", { params: { query: { locale, page: 1, pageSize: 24 } } }));
+  return page.items ?? [];
 }
 
-/** Approved reviews for the ticker. */
-export async function getTestimonials(): Promise<Testimonial[]> {
+async function readTestimonials(): Promise<Testimonial[]> {
   "use cache";
   cacheTag("testimonials");
   cacheLife("hours");
-  return load(() => api.GET("/api/v1/testimonials"), []);
+  return ok(api.GET("/api/v1/testimonials"));
 }
+
+export const getSettings = (locale: Locale) => orFallback(readSettings(locale), {} as Settings);
+export const getSkills = (locale: Locale) => orFallback(readSkills(locale), [] as SkillGroup[]);
+export const getTools = () => orFallback(readTools(), [] as Tool[]);
+export const getTimeline = (locale: Locale) => orFallback(readTimeline(locale), [] as TimelineEntry[]);
+export const getCategories = (locale: Locale) => orFallback(readCategories(locale), [] as Category[]);
+export const getProjects = (locale: Locale) => orFallback(readProjects(locale), [] as ProjectCard[]);
+/** Approved reviews for the review wall. */
+export const getTestimonials = () => orFallback(readTestimonials(), [] as Testimonial[]);
 
 /** Typed reads from the settings bag (values are JSON). */
 export const setting = {

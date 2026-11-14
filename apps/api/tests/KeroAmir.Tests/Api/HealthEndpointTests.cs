@@ -32,6 +32,16 @@ public class HealthEndpointTests(HealthEndpointTests.ApiFactory factory) : IClas
     }
 
     [Fact]
+    public async Task Responses_carry_security_headers()
+    {
+        var response = await factory.CreateClient().GetAsync("/api/v1/health/live", TestContext.Current.CancellationToken);
+        Assert.Equal("nosniff", response.Headers.GetValues("X-Content-Type-Options").Single());
+        Assert.Equal("DENY", response.Headers.GetValues("X-Frame-Options").Single());
+        Assert.Contains("frame-ancestors 'none'", response.Headers.GetValues("Content-Security-Policy").Single());
+        Assert.False(response.Headers.Contains("Server"));
+    }
+
+    [Fact]
     public async Task Unknown_route_returns_problem_details()
     {
         var response = await factory.CreateClient().GetAsync("/api/v1/nope", TestContext.Current.CancellationToken);

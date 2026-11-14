@@ -54,7 +54,7 @@ function usePieceGeometries() {
     return LOGO_PIECES.map((piece) => {
       const data = loader.parse(`<svg xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="${piece.d}"/></svg>`);
       const geometry = new THREE.ExtrudeGeometry(data.paths.flatMap((p) => p.toShapes()), {
-        depth: DEPTH, curveSegments: 10, bevelEnabled: true, bevelThickness: 12, bevelSize: 6, bevelSegments: 4,
+        depth: DEPTH, curveSegments: 6, bevelEnabled: true, bevelThickness: 12, bevelSize: 6, bevelSegments: 2,
       });
       geometry.translate(-piece.cx, -piece.cy, -DEPTH / 2);
       return geometry;

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -6,10 +6,15 @@ import { routing } from "@/i18n/routing";
 import { clash, inter, jetbrains } from "../fonts";
 import { ThemeScript } from "@/components/ui/ThemeScript";
 import { SiteHeader } from "@/components/sections/SiteHeader";
+import { SITE_URL } from "@/lib/site";
 import "../globals.css";
 
-/** Public origin of the site (no trailing slash), e.g. https://keroamir.com. */
-const SITE_URL = (process.env.SITE_URL ?? "http://localhost:3000").replace(/\/+$/, "");
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#F4F0E7" },
+    { media: "(prefers-color-scheme: dark)", color: "#0E1120" },
+  ],
+};
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -28,6 +33,16 @@ export async function generateMetadata({ params }: LayoutProps<"/[locale]">): Pr
       canonical: `/${locale}`,
       languages: { ...Object.fromEntries(routing.locales.map((l) => [l, `/${l}`])), "x-default": "/" },
     },
+    // The image itself comes from opengraph-image.tsx next to this layout.
+    openGraph: {
+      type: "website",
+      siteName: "Kero Amir",
+      title: t("title"),
+      description: t("description"),
+      url: `/${locale}`,
+      locale: locale === "de" ? "de_DE" : "en_US",
+    },
+    twitter: { card: "summary_large_image", title: t("title"), description: t("description") },
   };
 }
 
