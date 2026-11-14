@@ -18,4 +18,9 @@ public static class HandlerExtensions
     public static async Task<IResult> Created<TRequest, TResponse>(
         this IHandler<TRequest, TResponse> handler, TRequest request, Func<TResponse, string> location, CancellationToken ct) =>
         (await handler.HandleAsync(request, ct)).ToHttp(value => TypedResults.Created(location(value), value));
+
+    /// <summary>Runs a use case and maps its result: 202 Accepted with the value, or ProblemDetails.</summary>
+    public static async Task<IResult> Accepted<TRequest, TResponse>(
+        this IHandler<TRequest, TResponse> handler, TRequest request, CancellationToken ct) =>
+        (await handler.HandleAsync(request, ct)).ToHttp(value => TypedResults.Accepted((string?)null, value));
 }

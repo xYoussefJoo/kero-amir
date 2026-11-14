@@ -27,22 +27,22 @@ public static class CategoryEndpoints
 
         g.MapPost("/", (CategoryInput body, IHandler<CreateCategory, CategoryAdminDto> h, CancellationToken ct) =>
                 h.Created(new CreateCategory(body), c => $"/api/v1/admin/categories/{c.Id}", ct))
-            .Validate<CategoryInput>().Evicts(ContentCache.Categories)
+            .Validate<CategoryInput>().Evicts(ContentCache.Categories, ContentCache.Projects)
             .Produces<CategoryAdminDto>(StatusCodes.Status201Created).ProducesProblem(StatusCodes.Status409Conflict);
 
         g.MapPut("/{id:guid}", (Guid id, CategoryInput body, IHandler<UpdateCategory, CategoryAdminDto> h, CancellationToken ct) =>
                 h.Ok(new UpdateCategory(id, body), ct))
-            .Validate<CategoryInput>().Evicts(ContentCache.Categories)
+            .Validate<CategoryInput>().Evicts(ContentCache.Categories, ContentCache.Projects)
             .Produces<CategoryAdminDto>().ProducesProblem(StatusCodes.Status404NotFound).ProducesProblem(StatusCodes.Status409Conflict);
 
         g.MapDelete("/{id:guid}", (Guid id, IHandler<DeleteCategory, bool> h, CancellationToken ct) =>
                 h.NoContent(new DeleteCategory(id), ct))
-            .Evicts(ContentCache.Categories)
+            .Evicts(ContentCache.Categories, ContentCache.Projects)
             .Produces(StatusCodes.Status204NoContent).ProducesProblem(StatusCodes.Status404NotFound);
 
         g.MapPut("/order", (ReorderRequest body, IHandler<ReorderCategories, bool> h, CancellationToken ct) =>
                 h.NoContent(new ReorderCategories(body.Ids), ct))
-            .Validate<ReorderRequest>().Evicts(ContentCache.Categories)
+            .Validate<ReorderRequest>().Evicts(ContentCache.Categories, ContentCache.Projects)
             .Produces(StatusCodes.Status204NoContent);
     }
 }

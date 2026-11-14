@@ -64,6 +64,10 @@ public sealed class ApiFixture : WebApplicationFactory<Program>, IAsyncLifetime
         builder.UseSetting("Seed:OwnerEmail", OwnerEmail);
         builder.UseSetting("Seed:OwnerPassword", OwnerPassword);
         builder.UseSetting("RateLimits:AuthPerMinute", "1000");
+        builder.UseSetting("RateLimits:FormsPer10Minutes", "1000");
+        // Tests create their own data; the dev seeders (appsettings.Development.json) stay off here.
+        builder.UseSetting("Seed:Content", "false");
+        builder.UseSetting("Seed:SampleContent", "false");
     }
 
     /// <summary>Creates an extra account (no role) so destructive tests don't touch the owner.</summary>

@@ -140,3 +140,21 @@ Newest at the bottom. Format: date, decision, why.
 53. **Remaining LCP gap is simulated, not observed:** Lighthouse's simulated LCP is ~3.2 s (4x CPU), but the
     observed LCP is 328 ms (= FCP; the headline text). Closing the simulated gap needs visual trade-offs
     (font-display: optional, or delaying hero animations) and is left for the owner to decide.
+
+## Projects, comments, contact (2026-11-14, pulled forward from Phases 3 and 6)
+
+54. **Projects** are translatable, linked many-to-many to categories and tools, Draft/Published (only Published is
+    public), featured first. Public list is paged, filterable by category/tool slug, and returns everything a card
+    shows in one projected query. Cover images are URLs until the media library exists; no cover → branded cover.
+55. **Testimonials go through moderation** (Pending → Approved/Rejected); only Approved are public (max 50). Reviews
+    are shown in the language they were written in.
+56. **Public forms (testimonials, contact):** FluentValidation length caps, a honeypot field (`website`) whose
+    submissions are answered 202 like any other but silently dropped, and a "forms" rate limit of 5 per 10 minutes
+    per visitor. Submitter IPs are stored only as SHA-256 hashes. Turnstile and email alerts come with the
+    Resend/Turnstile keys.
+57. **Real visitor IP behind the web server:** the API trusts `X-Client-IP` only when `X-Forwarded-Secret` matches
+    `Forwarding:Secret` (constant-time compare); otherwise it uses the connection IP. Rate limits partition on it.
+58. **Sample data is development-only** (`Seed:SampleContent`, set in appsettings.Development.json): the old site's
+    demo projects and "Example" reviews, labelled as samples. Production never seeds them.
+59. Editing a category or tool also evicts the `projects` output cache (cards show their names); public cache keys
+    vary by every query parameter (locale, filters, paging).

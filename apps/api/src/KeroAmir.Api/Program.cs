@@ -50,10 +50,13 @@ v1.MapCategoryEndpoints(admin);
 v1.MapToolEndpoints(admin);
 v1.MapSkillEndpoints(admin);
 v1.MapTimelineEndpoints(admin);
+v1.MapProjectEndpoints(admin);
+v1.MapEngagementEndpoints(admin);
 
 await app.Services.MigrateDatabaseAsync(app.Configuration);
 await app.Services.SeedOwnerAsync(app.Configuration);
 await app.Services.SeedContentAsync(app.Configuration);
+await app.Services.SeedSamplesAsync(app.Configuration); // Development only: sample projects/reviews
 
 // Deploy step: seed the target database from the deploying machine, then stop (see deploy/deploy.ps1).
 if (args.Contains("--seed-and-exit"))

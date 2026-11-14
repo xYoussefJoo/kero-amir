@@ -12,6 +12,7 @@ public static class AuthSetup
 {
     public const string OwnerPolicy = "Owner";
     public const string AuthRateLimit = "auth";
+    public const string FormsRateLimit = "forms";
 
     public static IServiceCollection AddApiAuth(this IServiceCollection services, IConfiguration configuration)
     {
@@ -37,12 +38,17 @@ public static class AuthSetup
 
         // Brute-force guard on sign-in endpoints, per IP (account lockout covers per-account guessing).
         var authPerMinute = configuration.GetValue("RateLimits:AuthPerMinute", 10);
+        // Public forms (comments, contact): few legitimate submissions, so a tight window per visitor.
+        var formsPer10Minutes = configuration.GetValue("RateLimits:FormsPer10Minutes", 5);
         services.AddRateLimiter(o =>
         {
             o.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
             o.AddPolicy(AuthRateLimit, http => RateLimitPartition.GetFixedWindowLimiter(
-                http.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                ClientIp.Get(http) ?? "unknown",
                 _ => new FixedWindowRateLimiterOptions { PermitLimit = authPerMinute, Window = TimeSpan.FromMinutes(1) }));
+            o.AddPolicy(FormsRateLimit, http => RateLimitPartition.GetFixedWindowLimiter(
+                ClientIp.Get(http) ?? "unknown",
+                _ => new FixedWindowRateLimiterOptions { PermitLimit = formsPer10Minutes, Window = TimeSpan.FromMinutes(10) }));
         });
 
         return services;

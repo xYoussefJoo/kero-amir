@@ -14,12 +14,14 @@ public static class ContentCache
     public const string Tools = "tools";
     public const string Skills = "skills";
     public const string Timeline = "timeline";
+    public const string Projects = "projects";
+    public const string Testimonials = "testimonials";
 
     private static readonly TimeSpan Lifetime = TimeSpan.FromHours(1);
 
-    /// <summary>Caches a public GET, varying by ?locale.</summary>
+    /// <summary>Caches a public GET, varying by every query parameter (locale, filters, paging).</summary>
     public static RouteHandlerBuilder CachedAs(this RouteHandlerBuilder builder, string tag) =>
-        builder.CacheOutput(p => p.Expire(Lifetime).SetVaryByQuery("locale").Tag(tag));
+        builder.CacheOutput(p => p.Expire(Lifetime).SetVaryByQuery("*").Tag(tag));
 
     /// <summary>After a successful (2xx) write, evicts the given cache tags.</summary>
     public static TBuilder Evicts<TBuilder>(this TBuilder builder, params string[] tags)

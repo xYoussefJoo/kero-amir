@@ -2,6 +2,8 @@ using System.Linq.Expressions;
 using KeroAmir.Application.Common.Abstractions;
 using KeroAmir.Domain.Auth;
 using KeroAmir.Domain.Catalog;
+using KeroAmir.Domain.Engagement;
+using KeroAmir.Domain.Projects;
 using KeroAmir.Domain.Common;
 using KeroAmir.Domain.Settings;
 using KeroAmir.Domain.Skills;
@@ -23,6 +25,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<Skill> Skills => Set<Skill>();
     public DbSet<TimelineEntry> TimelineEntries => Set<TimelineEntry>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+    public DbSet<Project> Projects => Set<Project>();
+    public DbSet<Testimonial> Testimonials => Set<Testimonial>();
+    public DbSet<ContactMessage> ContactMessages => Set<ContactMessage>();
 
     Task<int> IAppDbContext.SaveChangesAsync(CancellationToken ct) => SaveChangesAsync(ct);
 

@@ -12,7 +12,9 @@ public class HealthEndpointTests(HealthEndpointTests.ApiFactory factory) : IClas
         protected override void ConfigureWebHost(IWebHostBuilder builder) =>
             builder
                 .UseSetting("ConnectionStrings:Sql", "Server=unused;Database=unused")
-                .UseSetting("Jwt:SigningKey", "test-signing-key-that-is-at-least-32-chars");
+                .UseSetting("Jwt:SigningKey", "test-signing-key-that-is-at-least-32-chars")
+                .UseSetting("Seed:Content", "false")
+                .UseSetting("Seed:SampleContent", "false");
     }
 
     [Fact]
