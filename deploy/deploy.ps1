@@ -52,6 +52,15 @@ if ([string]::IsNullOrWhiteSpace($secrets.jwtSigningKey)) {
     $secrets | ConvertTo-Json | Set-Content $SecretsFile -Encoding UTF8
     Write-Host 'Generated a JWT signing key and saved it to the secrets file.'
 }
+if (-not $secrets.PSObject.Properties['forwardingSecret'] -or [string]::IsNullOrWhiteSpace($secrets.forwardingSecret)) {
+    # Shared with the web app (Vercel env FORWARDING_SECRET): proves a form post really came from our web server,
+    # so the API can trust the visitor IP it forwards and rate-limit per visitor instead of per web server.
+    $bytes = New-Object byte[] 32
+    [System.Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($bytes)
+    $secrets | Add-Member -NotePropertyName forwardingSecret -NotePropertyValue ([Convert]::ToBase64String($bytes)) -Force
+    $secrets | ConvertTo-Json | Set-Content $SecretsFile -Encoding UTF8
+    Write-Host 'Generated a forwarding secret and saved it to the secrets file (copy it to Vercel as FORWARDING_SECRET).'
+}
 
 [xml] $profileXml = Get-Content $PublishSettings
 $profile = $profileXml.publishData.publishProfile | Where-Object { $_.publishMethod -eq 'MSDeploy' } | Select-Object -First 1
@@ -63,6 +72,7 @@ $baseEnv = [ordered] @{
     ASPNETCORE_ENVIRONMENT = 'Production'
     ConnectionStrings__Sql = $secrets.connectionString
     Jwt__SigningKey        = $secrets.jwtSigningKey
+    Forwarding__Secret     = $secrets.forwardingSecret
 }
 if ($ServerSideDatabase) { $baseEnv['Database__MigrateOnStartup'] = 'true' }
 

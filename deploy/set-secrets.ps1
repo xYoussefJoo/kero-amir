@@ -13,11 +13,13 @@ function Read-Secret([string] $prompt) {
     finally { [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($bstr) }
 }
 
-# Keep an existing JWT key so tokens stay valid across deploys.
+# Keep an existing JWT key (tokens stay valid) and forwarding secret (Vercel keeps working) across reruns.
 $jwtKey = ''
+$forwardingSecret = ''
 if (Test-Path $file) {
     $existing = Get-Content $file -Raw | ConvertFrom-Json
     if ($existing.jwtSigningKey) { $jwtKey = $existing.jwtSigningKey }
+    if ($existing.forwardingSecret) { $forwardingSecret = $existing.forwardingSecret }
 }
 
 $dbPassword = Read-Secret 'Database password (db79860)'
@@ -33,6 +35,7 @@ do {
 [ordered] @{
     connectionString = "Server=db79860.databaseasp.net; Database=db79860; User Id=db79860; Password=$dbPassword; $encryptPart MultipleActiveResultSets=True;"
     jwtSigningKey    = $jwtKey
+    forwardingSecret = $forwardingSecret
     ownerEmail       = $ownerEmail
     ownerPassword    = $ownerPassword
 } | ConvertTo-Json | Set-Content $file -Encoding UTF8

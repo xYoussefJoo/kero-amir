@@ -3,6 +3,13 @@ import createNextIntlPlugin from "next-intl/plugin";
 
 const isDev = process.env.NODE_ENV !== "production";
 
+// A Vercel build without these would quietly ship empty sections (API_URL falls back to localhost) and forms that
+// rate-limit every visitor together. Fail the build instead.
+if (process.env.VERCEL) {
+  const missing = ["API_URL", "FORWARDING_SECRET"].filter((name) => !process.env[name]);
+  if (missing.length) throw new Error(`Set these Vercel environment variables: ${missing.join(", ")} (see apps/web/.env.example).`);
+}
+
 // Everything (fonts, images, 3D, API calls via the BFF) is served from our own origin.
 // 'unsafe-inline' scripts: the theme script and Next's inline bootstrap; dev also needs eval for HMR.
 const csp = [
