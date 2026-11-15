@@ -48,7 +48,7 @@ internal sealed class TestimonialInputValidator : AbstractValidator<TestimonialI
 }
 
 // ---- Handlers
-internal sealed class TestimonialHandlers(IAppDbContext db) :
+internal sealed class TestimonialHandlers(IAppDbContext db, IOwnerNotifier notifier) :
     IHandler<SubmitTestimonial, SubmissionAccepted>,
     IHandler<ListTestimonials, IReadOnlyList<TestimonialDto>>,
     IHandler<ListTestimonialsAdmin, PagedResult<TestimonialAdminDto>>,
@@ -74,6 +74,7 @@ internal sealed class TestimonialHandlers(IAppDbContext db) :
                 IpHash = Fingerprint.HashIp(request.ClientIp),
             });
             await db.SaveChangesAsync(ct);
+            notifier.Notify(OwnerAlerts.NewReview(input));
         }
         // Same answer for humans and honeypot-caught bots.
         return new SubmissionAccepted("pending");

@@ -42,6 +42,6 @@ async function guardAdmin(request: NextRequest) {
 }
 
 export const config = {
-  // Everything except API routes, Next internals and files with an extension.
-  matcher: "/((?!api|_next|_vercel|.*\\..*).*)",
+  // Everything except API routes, uploaded images (/media), Next internals and files with an extension.
+  matcher: "/((?!api|media|_next|_vercel|.*\\..*).*)",
 };

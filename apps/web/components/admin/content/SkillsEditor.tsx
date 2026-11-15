@@ -18,6 +18,7 @@ export function SkillsEditor({ groups, skills, tools }: { groups: Group[]; skill
       <p className="text-muted">Each group is a card in the Toolkit section; skills show as level bars inside it.</p>
       {groups.map((g, i) => {
         const inGroup = skills.filter((s) => s.skillGroupId === g.id).sort((a, b) => Number(a.sortOrder) - Number(b.sortOrder));
+        const skillOrder = inGroup.map((s) => s.id);
         return (
           <section key={g.id} className="flex flex-col gap-3">
             <ul>
@@ -27,8 +28,8 @@ export function SkillsEditor({ groups, skills, tools }: { groups: Group[]; skill
                 form={(close) => <GroupForm group={g} close={close} />} />
             </ul>
             <ul className="ms-4 flex flex-col gap-2 border-s-2 border-muted/20 ps-4">
-              {inGroup.map((s) => (
-                <EditableRow key={s.id} id={s.id} resource="skills" title={nameIn(s.translations, "en")}
+              {inGroup.map((s, j) => (
+                <EditableRow key={s.id} id={s.id} resource="skills" order={skillOrder} index={j} title={nameIn(s.translations, "en")}
                   meta={`Level ${Number(s.level)}%${s.toolId ? ` · ${tools.find((t) => t.id === s.toolId)?.name ?? ""}` : ""}`}
                   form={(close) => <SkillForm skill={s} groups={groups} tools={tools} groupId={g.id} close={close} />} />
               ))}

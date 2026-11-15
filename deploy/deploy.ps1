@@ -75,6 +75,11 @@ $baseEnv = [ordered] @{
     Forwarding__Secret     = $secrets.forwardingSecret
 }
 if ($ServerSideDatabase) { $baseEnv['Database__MigrateOnStartup'] = 'true' }
+# Email alerts to Kero (new messages and reviews), only when a Resend key was given in set-secrets.
+if ($secrets.PSObject.Properties['resendApiKey'] -and $secrets.resendApiKey) {
+    $baseEnv['Email__ResendApiKey'] = $secrets.resendApiKey
+    $baseEnv['Email__To'] = $secrets.ownerEmail
+}
 
 function Set-WebConfigEnvironment([System.Collections.IDictionary] $variables) {
     $path = Join-Path $out 'web.config'

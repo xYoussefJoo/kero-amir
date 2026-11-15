@@ -7,6 +7,7 @@ import { useForm, useWatch } from "react-hook-form";
 import type { components } from "@/lib/api/schema";
 import { z } from "@/lib/zod";
 import { AdminField, FormMessages } from "./AdminField";
+import { ImageUpload } from "./ImageUpload";
 import { saveAdmin } from "./saveAdmin";
 
 type Project = components["schemas"]["ProjectAdminDto"];
@@ -22,7 +23,8 @@ const schema = z.object({
   slug: z.string().trim().min(1, "Required.").max(80).regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, "Lowercase letters, numbers and single hyphens."),
   year: z.coerce.number<string>().int().min(1990, "From 1990.").max(2100, "Up to 2100."),
   countries: z.string().trim().regex(/^([A-Za-z]{2}(\s*,\s*[A-Za-z]{2}){0,9})?$/, "Two-letter codes separated by commas, e.g. US, DE."),
-  coverImageUrl: z.string().trim().max(500).refine((u) => u === "" || u.startsWith("https://") || u.startsWith("/"), "Use an https:// link or a site path."),
+  // Uploaded images only (/media/…): next/image serves them from our own origin.
+  coverImageUrl: z.string().trim().max(500).refine((u) => u === "" || u.startsWith("/"), "Upload the cover image."),
   accentColor: z.string().regex(/^#[0-9a-fA-F]{6}$/),
   isFeatured: z.boolean(),
   categoryIds: z.array(z.string()).max(10),
@@ -56,7 +58,7 @@ export function ProjectForm({ project, categories, tools }: { project?: Project;
   const [slugTouched, setSlugTouched] = useState(!!project);
   const form = useForm<Values, unknown, z.output<typeof schema>>({ resolver: zodResolver(schema), defaultValues: initialValues(project) });
   const { register, handleSubmit, setValue, control, formState: { errors, isSubmitting } } = form;
-  const [categoryIds, toolIds, accentColor] = useWatch({ control, name: ["categoryIds", "toolIds", "accentColor"] });
+  const [categoryIds, toolIds, accentColor, coverImageUrl] = useWatch({ control, name: ["categoryIds", "toolIds", "accentColor", "coverImageUrl"] });
 
   const toggle = (name: "categoryIds" | "toolIds", id: string) => {
     const current = name === "categoryIds" ? categoryIds : toolIds;
@@ -123,9 +125,7 @@ export function ProjectForm({ project, categories, tools }: { project?: Project;
               <span className="font-mono text-sm">{accentColor.toUpperCase()}</span>
             </span>
           </AdminField>
-          <AdminField label="Cover image" error={errors.coverImageUrl?.message} wide hint="Optional: an https:// image link. Uploads come with the media library.">
-            <input className="form-input" placeholder="https://" {...register("coverImageUrl")} />
-          </AdminField>
+          <ImageUpload label="Cover image" value={coverImageUrl} onChange={(url) => setValue("coverImageUrl", url, { shouldDirty: true })} />
           <label className="flex items-center gap-3 text-sm font-medium sm:col-span-2">
             <input type="checkbox" className="h-5 w-5 accent-[var(--primary)]" {...register("isFeatured")} />
             Featured: shown big at the start of the grid

@@ -1,6 +1,7 @@
 using KeroAmir.Domain.Auth;
 using KeroAmir.Domain.Catalog;
 using KeroAmir.Domain.Engagement;
+using KeroAmir.Domain.Media;
 using KeroAmir.Domain.Projects;
 using KeroAmir.Domain.Settings;
 using KeroAmir.Domain.Skills;
@@ -22,6 +23,7 @@ public interface IAppDbContext
     DbSet<Project> Projects { get; }
     DbSet<Testimonial> Testimonials { get; }
     DbSet<ContactMessage> ContactMessages { get; }
+    DbSet<MediaFile> MediaFiles { get; }
 
     Task<int> SaveChangesAsync(CancellationToken ct);
 }

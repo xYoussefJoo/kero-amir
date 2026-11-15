@@ -706,7 +706,8 @@ body { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%
 }
 
 /* ---- Admin dashboard: sidebar shell, stat cards in the puzzle palette, panels. */
-.admin-shell { display: grid; min-height: 100dvh; grid-template-columns: 1fr; }
+.admin-shell { display: grid; min-height: 100dvh; grid-template-columns: minmax(0, 1fr); }
+.admin-sidebar, .admin-main { min-width: 0; }
 .admin-sidebar {
   display: flex; flex-direction: column; gap: 1.25rem; padding: 1rem;
   background: var(--surface); border-bottom: 1px solid color-mix(in srgb, var(--muted) 20%, transparent);
@@ -741,7 +742,8 @@ a.admin-nav__link:hover { color: var(--text); background: color-mix(in srgb, var
 }
 .admin-nav__soon { font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; }
 
-.admin-stats { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); }
+.admin-stats { display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fit, minmax(min(9.5rem, 100%), 1fr)); }
+@media (min-width: 640px) { .admin-stats { gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); } }
 .admin-stat { display: flex; flex-direction: column; gap: 0.35rem; padding: 1.25rem 1.35rem; border-radius: 1.1rem; }
 .admin-stat--blue { background: #2546eb; color: #f4f0e7; }
 .admin-stat--orange { background: #ff6535; color: #0e1120; }
@@ -890,3 +892,23 @@ a.admin-nav__link:hover { color: var(--text); background: color-mix(in srgb, var
 .admin-btn:active:not(:disabled) { translate: 0 1px; transition-duration: 0.08s; }
 .admin-btn--primary:hover:not(:disabled) { background: var(--accent); border-color: var(--accent); color: var(--on-accent); filter: none; }
 @media (prefers-reduced-motion: reduce) { .admin-btn:hover:not(:disabled), .admin-btn:active:not(:disabled) { translate: none; } }
+
+.admin-upload { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; padding: 0.75rem; border-radius: 0.9rem;
+  border: 1px dashed color-mix(in srgb, var(--muted) 45%, transparent); }
+.admin-upload__preview { width: 9rem; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 0.6rem; }
+.admin-upload__empty { flex: 1; min-width: 12rem; font-weight: 400; color: var(--muted); }
+
+/* Phones: one compact bar (brand + theme + sign out), the menu scrolls sideways under it, View site is an icon. */
+@media (max-width: 1023px) {
+  .admin-sidebar { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "brand foot" "nav nav";
+    gap: 0.75rem 0.5rem; padding: 0.75rem 1rem 0.5rem; position: sticky; top: 0; z-index: 30; }
+  .admin-sidebar > :first-child { grid-area: brand; }
+  .admin-sidebar__foot { grid-area: foot; flex-direction: row; align-items: center; gap: 0.25rem; }
+  .admin-sidebar__foot > div { padding: 0; gap: 0.4rem; }
+  .admin-sidebar__foot .admin-nav__link { padding: 0.5rem; }
+  .admin-sidebar__foot .admin-nav__link span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .admin-sidebar__nav { grid-area: nav; margin-inline: -1rem; padding-inline: 1rem; scrollbar-width: none; }
+  .admin-sidebar__nav::-webkit-scrollbar { display: none; }
+  .admin-nav__link { padding: 0.5rem 0.7rem; }
+  .admin-nav__soon { display: none; }
+}

@@ -73,6 +73,7 @@ v1.MapSkillEndpoints(admin);
 v1.MapTimelineEndpoints(admin);
 v1.MapProjectEndpoints(admin);
 v1.MapEngagementEndpoints(admin);
+v1.MapMediaEndpoints(admin);
 
 await app.Services.MigrateDatabaseAsync(app.Configuration);
 await app.Services.SeedOwnerAsync(app.Configuration);

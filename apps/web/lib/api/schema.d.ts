@@ -297,6 +297,56 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/media": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "multipart/form-data": {
+                        file: components["schemas"]["IFormFile"];
+                    };
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["MediaDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/settings": {
         parameters: {
             query?: never;
@@ -2634,6 +2684,55 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/media/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "image/webp": components["schemas"]["FileContentHttpResult"];
+                        "image/jpeg": components["schemas"]["FileContentHttpResult"];
+                        "image/png": components["schemas"]["FileContentHttpResult"];
+                        "image/avif": components["schemas"]["FileContentHttpResult"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/projects": {
         parameters: {
             query?: never;
@@ -2808,6 +2907,21 @@ export interface components {
             latestMessages: components["schemas"]["MessagePreview"][];
             pendingReviews: components["schemas"]["ReviewPreview"][];
         };
+        EntityTagHeaderValue: {
+            tag?: components["schemas"]["StringSegment"];
+            isWeak?: boolean;
+        };
+        FileContentHttpResult: {
+            contentType?: string;
+            fileDownloadName?: null | string;
+            /** Format: date-time */
+            lastModified?: null | string;
+            entityTag?: null | components["schemas"]["EntityTagHeaderValue"];
+            enableRangeProcessing?: boolean;
+            /** Format: int64 */
+            fileLength?: null | number | string;
+            fileContents?: components["schemas"]["ReadOnlyMemoryOfbyte"];
+        };
         HttpValidationProblemDetails: {
             type?: null | string;
             title?: null | string;
@@ -2819,6 +2933,8 @@ export interface components {
                 [key: string]: string[];
             };
         };
+        /** Format: binary */
+        IFormFile: string;
         InboxCounts: {
             /** Format: int32 */
             new: number | string;
@@ -2842,6 +2958,14 @@ export interface components {
         };
         LogoutRequest: {
             refreshToken: string;
+        };
+        MediaDto: {
+            /** Format: uuid */
+            id: string;
+            url: string;
+            contentType: string;
+            /** Format: int32 */
+            size: number | string;
         };
         MeResponse: {
             /** Format: uuid */
@@ -3033,6 +3157,7 @@ export interface components {
         };
         /** @enum {unknown} */
         PublishStatus: "Draft" | "Published";
+        ReadOnlyMemoryOfbyte: string;
         RecoveryCodesResponse: {
             codes: string[];
         };
@@ -3118,6 +3243,15 @@ export interface components {
             /** Format: int32 */
             level: number | string;
             translations: components["schemas"]["NameTranslationInput"][];
+        };
+        StringSegment: {
+            buffer?: null | string;
+            /** Format: int32 */
+            offset?: number | string;
+            /** Format: int32 */
+            length?: number | string;
+            value?: null | string;
+            hasValue?: boolean;
         };
         SubmissionAccepted: {
             status: string;

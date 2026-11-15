@@ -32,12 +32,16 @@ do {
     if ($ownerPassword.Length -lt 12) { Write-Host 'Too short, try again.' -ForegroundColor Yellow }
 } while ($ownerPassword.Length -lt 12)
 
+# Optional: email alerts for new messages and reviews (resend.com). Press Enter to skip.
+$resendApiKey = Read-Secret 'Resend API key for email alerts (optional, Enter to skip)'
+
 [ordered] @{
     connectionString = "Server=db79860.databaseasp.net; Database=db79860; User Id=db79860; Password=$dbPassword; $encryptPart MultipleActiveResultSets=True;"
     jwtSigningKey    = $jwtKey
     forwardingSecret = $forwardingSecret
     ownerEmail       = $ownerEmail
     ownerPassword    = $ownerPassword
+    resendApiKey     = $resendApiKey
 } | ConvertTo-Json | Set-Content $file -Encoding UTF8
 
 Write-Host "Saved to $file" -ForegroundColor Green

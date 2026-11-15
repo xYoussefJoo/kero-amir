@@ -48,7 +48,7 @@ internal sealed class ContactInputValidator : AbstractValidator<ContactInput>
 }
 
 // ---- Handlers
-internal sealed class ContactHandlers(IAppDbContext db) :
+internal sealed class ContactHandlers(IAppDbContext db, IOwnerNotifier notifier) :
     IHandler<SubmitContact, SubmissionAccepted>,
     IHandler<ListContactMessages, PagedResult<ContactMessageDto>>,
     IHandler<SetContactStatus, ContactMessageDto>
@@ -70,7 +70,7 @@ internal sealed class ContactHandlers(IAppDbContext db) :
                 IpHash = Fingerprint.HashIp(request.ClientIp),
             });
             await db.SaveChangesAsync(ct);
-            // Email alert to Kero arrives with the background email queue (IEmailSender, Resend).
+            notifier.Notify(OwnerAlerts.NewMessage(input));
         }
         return new SubmissionAccepted("received");
     }

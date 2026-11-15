@@ -16,7 +16,7 @@ export function TimelineEditor({ entries }: { entries: Entry[] }) {
   const sorted = [...entries].sort((a, b) => b.startDate.localeCompare(a.startDate));
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-muted">The Journey section. The site sorts entries by date, newest first.</p>
+      <p className="text-muted">The Journey section. Entries are always in date order (newest first): to move one, change its start date.</p>
       <ul className="flex flex-col gap-3">
         {sorted.map((e) => {
           const en = e.translations.find((t) => t.locale === "en");

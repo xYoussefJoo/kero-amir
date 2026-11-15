@@ -3,6 +3,7 @@ using KeroAmir.Application.Common.Abstractions;
 using KeroAmir.Domain.Auth;
 using KeroAmir.Domain.Catalog;
 using KeroAmir.Domain.Engagement;
+using KeroAmir.Domain.Media;
 using KeroAmir.Domain.Projects;
 using KeroAmir.Domain.Common;
 using KeroAmir.Domain.Settings;
@@ -28,6 +29,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<Project> Projects => Set<Project>();
     public DbSet<Testimonial> Testimonials => Set<Testimonial>();
     public DbSet<ContactMessage> ContactMessages => Set<ContactMessage>();
+    public DbSet<MediaFile> MediaFiles => Set<MediaFile>();
 
     Task<int> IAppDbContext.SaveChangesAsync(CancellationToken ct) => SaveChangesAsync(ct);
 

@@ -1,4 +1,5 @@
 using KeroAmir.Application.Common.Abstractions;
+using KeroAmir.Infrastructure.Email;
 using KeroAmir.Infrastructure.Identity;
 using KeroAmir.Infrastructure.Persistence;
 using KeroAmir.Infrastructure.Persistence.Interceptors;
@@ -25,7 +26,22 @@ public static class DependencyInjection
         services.AddScoped<IAppDbContext>(sp => sp.GetRequiredService<AppDbContext>());
 
         services.AddIdentityInfrastructure(configuration);
+        services.AddOwnerAlerts(configuration);
         return services;
+    }
+
+    /// <summary>Alert emails to Kero: requests enqueue, a background worker sends through Resend.</summary>
+    private static void AddOwnerAlerts(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<EmailOptions>(configuration.GetSection(EmailOptions.SectionName));
+        services.AddSingleton<OwnerAlertChannel>();
+        services.AddSingleton<IOwnerNotifier>(sp => sp.GetRequiredService<OwnerAlertChannel>());
+        services.AddHttpClient<ResendEmailClient>(http =>
+        {
+            http.BaseAddress = new Uri("https://api.resend.com/");
+            http.Timeout = TimeSpan.FromSeconds(15);
+        });
+        services.AddHostedService<OwnerAlertSender>();
     }
 
     private static void AddIdentityInfrastructure(this IServiceCollection services, IConfiguration configuration)

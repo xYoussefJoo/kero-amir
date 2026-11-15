@@ -204,3 +204,13 @@ Newest at the bottom. Format: date, decision, why.
 78. **Changing the password revokes every refresh token**: all sessions end, including the current one.
 79. **Reviews are a sliding banner** of puzzle pieces (replaces the static wall in #67): CSS-only loop, paused on
     hover/focus and off-screen; reduced motion gets a swipeable strip. The site footer was removed (owner's call).
+80. **Uploaded images live in the database** (`MediaFiles`, varbinary): they survive deploys (Web Deploy sync would
+    delete files written to the site folder) and are backed up with the content. The browser shrinks images first
+    (≤ 2400 px, WebP), the API accepts ≤ 3 MB and checks the real type by its first bytes (JPEG/PNG/WebP/AVIF; no SVG).
+    The web serves them at `/media/{id}` (same origin: CSP stays 'self', next/image resizes them, cached for a year).
+    Project covers are uploads only: next/image refuses unconfigured remote hosts.
+81. **Email alerts** for new messages and reviews: handlers enqueue (`IOwnerNotifier`), a background worker sends
+    plain text through Resend with retries; without `Email:ResendApiKey` alerts are only logged. A lost alert never
+    loses data: everything is in the dashboard.
+82. **Journey order is by date** (newest first); skills, skill groups, tools, categories and projects are ordered by hand.
+83. **Dashboard on phones:** compact sticky top bar (brand, view site, theme, sign out) with a sideways-scrolling menu.
