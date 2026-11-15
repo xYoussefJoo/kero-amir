@@ -89,3 +89,28 @@ export const getToolsAdmin = cache(async (): Promise<ToolAdmin[]> => {
   const headers = authHeaders(await token());
   return (await read(api.GET("/api/v1/admin/tools", { headers, params: { query: ALL } }))).items;
 });
+
+export type SkillGroupAdmin = Schemas["SkillGroupAdminDto"];
+export type SkillAdmin = Schemas["SkillAdminDto"];
+export type TimelineAdmin = Schemas["TimelineEntryAdminDto"];
+export type SettingAdmin = Schemas["SettingAdminDto"];
+
+export async function getSkillGroupsAdmin(): Promise<SkillGroupAdmin[]> {
+  const headers = authHeaders(await token());
+  return [...(await read(api.GET("/api/v1/admin/skill-groups", { headers })))];
+}
+
+export async function getSkillsAdmin(): Promise<SkillAdmin[]> {
+  const headers = authHeaders(await token());
+  return (await read(api.GET("/api/v1/admin/skills", { headers, params: { query: ALL } }))).items;
+}
+
+export async function getTimelineAdmin(): Promise<TimelineAdmin[]> {
+  const headers = authHeaders(await token());
+  return (await read(api.GET("/api/v1/admin/timeline", { headers, params: { query: ALL } }))).items;
+}
+
+export async function getSettingsAdmin(): Promise<SettingAdmin[]> {
+  const headers = authHeaders(await token());
+  return [...(await read(api.GET("/api/v1/admin/settings", { headers })))];
+}

@@ -10,7 +10,7 @@ const NAV: AdminNavItem[] = [
   { href: "/admin/inbox", label: "Inbox", icon: "inbox" },
   { href: "/admin/reviews", label: "Reviews", icon: "reviews" },
   { href: "/admin/projects", label: "Projects", icon: "projects" },
-  { href: "/admin/content", label: "Content", icon: "content", soon: true },
+  { href: "/admin/content", label: "Content", icon: "content" },
   { href: "/admin/account", label: "Account", icon: "account" },
 ];
 

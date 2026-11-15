@@ -192,3 +192,15 @@ Newest at the bottom. Format: date, decision, why.
     alerts.
 74. Accepted: 7 "moderate" `npm audit` findings are one minimatch advisory nested in ESLint's TypeScript parser
     (dev-only, matches only our own globs, never shipped). Revisit when typescript-eslint updates it.
+75. **Admin dashboard** (`/admin`, route group `(dashboard)`): sidebar shell; Overview (one `GET /admin/overview` call:
+    counts + latest items, shared by page and nav badges via React `cache()`), Inbox, Reviews, Projects (create/edit
+    form, publish, order), Content (site texts, skills, tools, journey, categories) and Account. Server Components read
+    through `lib/server/admin.ts`; every change goes through the BFF and refreshes the page (`router.refresh()`).
+76. **Admin saves refresh the public site immediately:** the BFF revalidates the site cache tags of the resource it
+    changed (`tagsForBffPath`), instead of waiting for the hourly cache to expire.
+77. **Two-factor sign-in (TOTP):** set up from Account with a QR code (the `qrcode` library loads only on that step) or
+    the manual key; turning it on returns 8 one-time recovery codes (shown once; copy/download). Sign-in accepts a
+    recovery code instead of the 6 digits. New codes and turning 2FA off both need a current code.
+78. **Changing the password revokes every refresh token**: all sessions end, including the current one.
+79. **Reviews are a sliding banner** of puzzle pieces (replaces the static wall in #67): CSS-only loop, paused on
+    hover/focus and off-screen; reduced motion gets a swipeable strip. The site footer was removed (owner's call).
