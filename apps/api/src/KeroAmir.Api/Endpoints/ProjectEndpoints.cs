@@ -29,6 +29,10 @@ public static class ProjectEndpoints
                 h.Ok(new ListProjectsAdmin(page), ct))
             .Produces<PagedResult<ProjectAdminDto>>();
 
+        g.MapGet("/{id:guid}", (Guid id, IHandler<GetProjectAdmin, ProjectAdminDto> h, CancellationToken ct) =>
+                h.Ok(new GetProjectAdmin(id), ct))
+            .Produces<ProjectAdminDto>().ProducesProblem(StatusCodes.Status404NotFound);
+
         g.MapPost("/", (ProjectInput body, IHandler<CreateProject, ProjectAdminDto> h, CancellationToken ct) =>
                 h.Created(new CreateProject(body), p => $"/api/v1/admin/projects/{p.Id}", ct))
             .Validate<ProjectInput>().Evicts(ContentCache.Projects)

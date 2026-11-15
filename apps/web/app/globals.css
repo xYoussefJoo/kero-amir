@@ -801,3 +801,16 @@ a.admin-nav__link:hover { color: var(--text); background: color-mix(in srgb, var
 .admin-chip--rejected { background: color-mix(in srgb, var(--muted) 14%, transparent); color: var(--muted); }
 .admin-empty { padding: 2rem 1.5rem; border-radius: 1rem; border: 1px dashed color-mix(in srgb, var(--muted) 40%, transparent);
   text-align: center; font-size: 0.925rem; color: var(--muted); }
+
+.admin-project { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; padding: 1rem 1.15rem; }
+.admin-project__swatch { display: grid; width: 3rem; height: 3rem; flex: none; place-items: center; border-radius: 0.8rem;
+  font-family: var(--font-display); font-weight: 600; text-transform: uppercase; color: #fff; }
+.admin-icon-btn { display: grid; width: 2.2rem; height: 2.2rem; place-items: center; border-radius: 9999px; color: var(--muted); }
+.admin-icon-btn:hover:not(:disabled) { color: var(--primary); background: color-mix(in srgb, var(--primary) 10%, transparent); }
+.admin-icon-btn:disabled { opacity: 0.35; }
+.admin-form-grid { display: grid; gap: 1rem 1.25rem; grid-template-columns: 1fr; }
+@media (min-width: 640px) { .admin-form-grid { grid-template-columns: 1fr 1fr; } }
+.admin-toggle { padding: 0.4rem 0.9rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 500;
+  border: 1px solid color-mix(in srgb, var(--muted) 40%, transparent); transition: all 0.15s; }
+.admin-toggle:hover { border-color: var(--primary); }
+.admin-toggle[aria-pressed="true"] { background: var(--primary); border-color: var(--primary); color: var(--on-primary); }

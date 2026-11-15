@@ -15,9 +15,13 @@ const ICONS = {
 
 export type AdminNavItem = { href: string; label: string; icon: keyof typeof ICONS; badge?: number; soon?: boolean };
 
-export function AdminNav({ items, soonLabel }: { items: AdminNavItem[]; soonLabel: string }) {
-  const pathname = usePathname();
+/** Highlights the current page. Client-only because it reads the URL. */
+export function AdminNav(props: { items: AdminNavItem[]; soonLabel: string }) {
+  return <AdminNavLinks {...props} pathname={usePathname()} />;
+}
 
+/** The nav markup; with no pathname nothing is highlighted (the static fallback while counts load). */
+export function AdminNavLinks({ items, soonLabel, pathname = "" }: { items: AdminNavItem[]; soonLabel: string; pathname?: string }) {
   return (
     <ul className="admin-nav">
       {items.map((item) => {

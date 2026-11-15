@@ -59,3 +59,33 @@ export async function getReviews(status: ModerationStatus | undefined, page: num
   const data = await read(api.GET("/api/v1/admin/testimonials", { headers, params: { query: { status, page, pageSize: PAGE_SIZE } } }));
   return { ...data, page: Number(data.page), pageSize: Number(data.pageSize), totalCount: Number(data.totalCount) };
 }
+
+export type ProjectAdmin = Schemas["ProjectAdminDto"];
+export type CategoryAdmin = Schemas["CategoryAdminDto"];
+export type ToolAdmin = Schemas["ToolAdminDto"];
+
+/** A portfolio stays small (tens of projects), so the admin loads the whole list in one page. */
+const ALL = { Page: 1, PageSize: 100 };
+
+export async function getProjectsAdmin(): Promise<ProjectAdmin[]> {
+  const headers = authHeaders(await token());
+  return (await read(api.GET("/api/v1/admin/projects", { headers, params: { query: ALL } }))).items;
+}
+
+/** One project for the edit form; null when it doesn't exist (the page shows 404). */
+export async function getProjectAdmin(id: string): Promise<ProjectAdmin | null> {
+  const headers = authHeaders(await token());
+  const { data, response } = await api.GET("/api/v1/admin/projects/{id}", { headers, params: { path: { id } } });
+  if (response.status === 404 || response.status === 400) return null;
+  return read(Promise.resolve({ data, response }));
+}
+
+export const getCategoriesAdmin = cache(async (): Promise<CategoryAdmin[]> => {
+  const headers = authHeaders(await token());
+  return (await read(api.GET("/api/v1/admin/categories", { headers, params: { query: ALL } }))).items;
+});
+
+export const getToolsAdmin = cache(async (): Promise<ToolAdmin[]> => {
+  const headers = authHeaders(await token());
+  return (await read(api.GET("/api/v1/admin/tools", { headers, params: { query: ALL } }))).items;
+});

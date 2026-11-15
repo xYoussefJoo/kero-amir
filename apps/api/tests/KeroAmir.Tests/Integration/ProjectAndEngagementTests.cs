@@ -49,6 +49,9 @@ public class ProjectAndEngagementTests(ApiFixture api)
     {
         var (admin, category, project) = await CreateDraftProject();
         Assert.Equal(PublishStatus.Draft, project.Status);
+        var loaded = await Read<ProjectAdminDto>(await admin.GetAsync($"/api/v1/admin/projects/{project.Id}", Ct), HttpStatusCode.OK);
+        Assert.Equal((project.Slug, 2), (loaded.Slug, loaded.Translations.Count));
+        Assert.Equal(HttpStatusCode.NotFound, (await admin.GetAsync($"/api/v1/admin/projects/{Guid.NewGuid()}", Ct)).StatusCode);
         Assert.DoesNotContain((await PublicProjects($"category={category.Slug}")).Items, p => p.Id == project.Id);
         Assert.Equal(HttpStatusCode.NotFound, (await api.CreateClient().GetAsync($"/api/v1/projects/{project.Slug}", Ct)).StatusCode);
 

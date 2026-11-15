@@ -33,6 +33,7 @@ public sealed record ProjectAdminDto(
 public sealed record ListProjects(string Locale, string? Category, string? Tool, PageRequest Page);
 public sealed record GetProject(string Slug, string Locale);
 public sealed record ListProjectsAdmin(PageRequest Page);
+public sealed record GetProjectAdmin(Guid Id);
 public sealed record CreateProject(ProjectInput Input);
 public sealed record UpdateProject(Guid Id, ProjectInput Input);
 public sealed record DeleteProject(Guid Id);
@@ -70,6 +71,7 @@ internal sealed class ProjectHandlers(IAppDbContext db, TimeProvider clock) :
     IHandler<ListProjects, PagedResult<ProjectCardDto>>,
     IHandler<GetProject, ProjectCardDto>,
     IHandler<ListProjectsAdmin, PagedResult<ProjectAdminDto>>,
+    IHandler<GetProjectAdmin, ProjectAdminDto>,
     IHandler<CreateProject, ProjectAdminDto>,
     IHandler<UpdateProject, ProjectAdminDto>,
     IHandler<DeleteProject, bool>,
@@ -105,6 +107,12 @@ internal sealed class ProjectHandlers(IAppDbContext db, TimeProvider clock) :
     {
         var page = await AdminRows(db.Projects.AsNoTracking().OrderBy(p => p.SortOrder)).ToPagedAsync(request.Page, ct);
         return new PagedResult<ProjectAdminDto>([.. page.Items.Select(ToAdmin)], page.Page, page.PageSize, page.TotalCount);
+    }
+
+    public async Task<Result<ProjectAdminDto>> HandleAsync(GetProjectAdmin request, CancellationToken ct)
+    {
+        var row = await AdminRows(db.Projects.AsNoTracking().Where(p => p.Id == request.Id)).SingleOrDefaultAsync(ct);
+        return row is null ? Error.NotFound(Entity, request.Id) : ToAdmin(row);
     }
 
     public async Task<Result<ProjectAdminDto>> HandleAsync(CreateProject request, CancellationToken ct)

@@ -2,14 +2,14 @@ import { Suspense } from "react";
 import { getOverview } from "@/lib/server/admin";
 import { Logo } from "@/components/ui/Logo";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
-import { AdminNav, type AdminNavItem } from "@/components/admin/AdminNav";
+import { AdminNav, AdminNavLinks, type AdminNavItem } from "@/components/admin/AdminNav";
 import { SignOutButton } from "@/components/admin/SignOutButton";
 
 const NAV: AdminNavItem[] = [
   { href: "/admin", label: "Overview", icon: "overview" },
   { href: "/admin/inbox", label: "Inbox", icon: "inbox" },
   { href: "/admin/reviews", label: "Reviews", icon: "reviews" },
-  { href: "/admin/projects", label: "Projects", icon: "projects", soon: true },
+  { href: "/admin/projects", label: "Projects", icon: "projects" },
   { href: "/admin/content", label: "Content", icon: "content", soon: true },
   { href: "/admin/account", label: "Account", icon: "account", soon: true },
 ];
@@ -34,7 +34,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
         </div>
         <nav aria-label="Dashboard" className="admin-sidebar__nav">
-          <Suspense fallback={<AdminNav items={NAV} soonLabel="Soon" />}>
+          <Suspense fallback={<AdminNavLinks items={NAV} soonLabel="Soon" />}>
             <NavWithBadges />
           </Suspense>
         </nav>
