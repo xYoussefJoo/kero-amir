@@ -11,7 +11,7 @@ const NAV: AdminNavItem[] = [
   { href: "/admin/reviews", label: "Reviews", icon: "reviews" },
   { href: "/admin/projects", label: "Projects", icon: "projects" },
   { href: "/admin/content", label: "Content", icon: "content", soon: true },
-  { href: "/admin/account", label: "Account", icon: "account", soon: true },
+  { href: "/admin/account", label: "Account", icon: "account" },
 ];
 
 /** Same nav, with live counts on Inbox (new messages) and Reviews (waiting for approval). */

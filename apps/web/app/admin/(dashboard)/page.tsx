@@ -31,7 +31,7 @@ async function Overview() {
 
       {!me.twoFactorEnabled && (
         <div role="status" className="admin-alert">
-          <strong>Two-factor sign-in is off.</strong> Turn it on before the site goes live (Account, coming in part 5).
+          <strong>Two-factor sign-in is off.</strong> Turn it on before the site goes live: <Link href="/admin/account" className="font-semibold underline">Account</Link>.
         </div>
       )}
 

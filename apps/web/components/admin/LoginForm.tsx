@@ -12,7 +12,8 @@ const passwordSchema = z.object({
 });
 
 const codeSchema = z.object({
-  code: z.string().regex(/^\d{6}$/, "Enter the 6-digit code from your authenticator app."),
+  // The authenticator's 6 digits, or a one-time recovery code like AB12C-D34EF.
+  code: z.string().trim().regex(/^(\d{6}|[A-Za-z0-9]{5}-?[A-Za-z0-9]{5})$/, "Enter the 6-digit code, or a recovery code like AB12C-D34EF."),
 });
 
 type PasswordValues = z.infer<typeof passwordSchema>;
@@ -31,6 +32,7 @@ export function LoginForm() {
   const router = useRouter();
   const [step, setStep] = useState<"password" | "code">("password");
   const [error, setError] = useState<string | null>(null);
+  const [recovery, setRecovery] = useState(false);
 
   const passwordForm = useForm<PasswordValues>({ resolver: zodResolver(passwordSchema) });
   const codeForm = useForm<CodeValues>({ resolver: zodResolver(codeSchema) });
@@ -79,12 +81,23 @@ export function LoginForm() {
         </form>
       ) : (
         <form onSubmit={submitCode} noValidate className="flex flex-col gap-4">
-          <p className="text-sm text-muted">Enter the code from your authenticator app.</p>
-          <Field label="6-digit code" error={codeForm.formState.errors.code?.message}>
-            <input inputMode="numeric" autoComplete="one-time-code" maxLength={6} autoFocus
-              className={`${inputClass} font-mono tracking-[0.4em]`} {...codeForm.register("code")} />
+          <p className="text-sm text-muted">
+            {recovery ? "Enter one of your recovery codes. Each code works once." : "Enter the code from your authenticator app."}
+          </p>
+          <Field label={recovery ? "Recovery code" : "6-digit code"} error={codeForm.formState.errors.code?.message}>
+            {recovery ? (
+              <input key="recovery" autoComplete="off" autoCapitalize="characters" spellCheck={false} maxLength={11} autoFocus
+                className={`${inputClass} font-mono uppercase tracking-[0.2em]`} {...codeForm.register("code")} />
+            ) : (
+              <input key="totp" inputMode="numeric" autoComplete="one-time-code" maxLength={6} autoFocus
+                className={`${inputClass} font-mono tracking-[0.4em]`} {...codeForm.register("code")} />
+            )}
           </Field>
           <Submit busy={busy}>Verify</Submit>
+          <button type="button" onClick={() => { setRecovery(!recovery); codeForm.reset({ code: "" }); setError(null); }}
+            className="text-sm text-muted underline-offset-4 hover:text-primary hover:underline">
+            {recovery ? "Use the authenticator app" : "Lost your phone? Use a recovery code"}
+          </button>
           <button type="button" onClick={() => { setStep("password"); setError(null); }}
             className="text-sm text-muted underline-offset-4 hover:text-primary hover:underline">
             Use a different account

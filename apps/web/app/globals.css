@@ -814,3 +814,16 @@ a.admin-nav__link:hover { color: var(--text); background: color-mix(in srgb, var
   border: 1px solid color-mix(in srgb, var(--muted) 40%, transparent); transition: all 0.15s; }
 .admin-toggle:hover { border-color: var(--primary); }
 .admin-toggle[aria-pressed="true"] { background: var(--primary); border-color: var(--primary); color: var(--on-primary); }
+
+.admin-steps { display: grid; gap: 1.5rem; }
+@media (min-width: 640px) { .admin-steps { grid-template-columns: auto 1fr; } }
+.admin-steps > div { display: flex; flex-direction: column; align-items: flex-start; gap: 0.6rem; }
+.admin-steps__n { display: grid; width: 1.8rem; height: 1.8rem; place-items: center; border-radius: 9999px;
+  font-family: var(--font-display); font-weight: 600; background: var(--primary); color: var(--on-primary); }
+.admin-qr { border-radius: 0.9rem; border: 1px solid color-mix(in srgb, var(--muted) 25%, transparent); }
+.admin-key { padding: 0.4rem 0.7rem; border-radius: 0.5rem; font-family: var(--font-mono); font-size: 0.85rem; letter-spacing: 0.05em;
+  background: color-mix(in srgb, var(--muted) 12%, transparent); user-select: all; }
+.admin-codes { display: grid; gap: 0.5rem; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 1rem; border-radius: 0.9rem;
+  list-style: none; font-family: var(--font-mono); font-size: 1rem; letter-spacing: 0.08em;
+  background: color-mix(in srgb, var(--muted) 10%, transparent); }
+@media (min-width: 640px) { .admin-codes { grid-template-columns: repeat(4, minmax(0, 1fr)); } }

@@ -129,7 +129,9 @@ public class AuthTests(ApiFixture api)
         var totp = new Totp(Base32Encoding.ToBytes(setup.SharedKey));
 
         var enable = await authed.PostAsJsonAsync("/api/v1/admin/account/2fa/enable", new TwoFactorCodeBody(totp.ComputeTotp()), Ct);
-        Assert.Equal(HttpStatusCode.NoContent, enable.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, enable.StatusCode);
+        var codes = (await enable.Content.ReadFromJsonAsync<RecoveryCodesResponse>(Ct))!.Codes;
+        Assert.Equal(8, codes.Count);
 
         try
         {
@@ -145,6 +147,21 @@ public class AuthTests(ApiFixture api)
             var step2 = await _client.PostAsJsonAsync("/api/v1/auth/2fa",
                 new TwoFactorLoginRequest(step1.ChallengeToken!, totp.ComputeTotp()), Ct);
             Assert.Equal(HttpStatusCode.OK, step2.StatusCode);
+
+            // A recovery code signs in once (typed in lower case), then it is used up.
+            var recovery = await _client.PostAsJsonAsync("/api/v1/auth/2fa",
+                new TwoFactorLoginRequest(step1.ChallengeToken!, codes[0].ToLowerInvariant()), Ct);
+            Assert.Equal(HttpStatusCode.OK, recovery.StatusCode);
+            var reused = await _client.PostAsJsonAsync("/api/v1/auth/2fa", new TwoFactorLoginRequest(step1.ChallengeToken!, codes[0]), Ct);
+            Assert.Equal(HttpStatusCode.Unauthorized, reused.StatusCode);
+            var me = (await (await GetMe(tokens.AccessToken)).Content.ReadFromJsonAsync<MeResponse>(Ct))!;
+            Assert.Equal((true, 7), (me.TwoFactorEnabled, me.RecoveryCodesLeft));
+
+            // A fresh set needs a current authenticator code and replaces the old codes.
+            var fresh = await authed.PostAsJsonAsync("/api/v1/admin/account/2fa/recovery-codes", new TwoFactorCodeBody(totp.ComputeTotp()), Ct);
+            Assert.Equal(8, (await fresh.Content.ReadFromJsonAsync<RecoveryCodesResponse>(Ct))!.Codes.Count);
+            var oldCode = await _client.PostAsJsonAsync("/api/v1/auth/2fa", new TwoFactorLoginRequest(step1.ChallengeToken!, codes[1]), Ct);
+            Assert.Equal(HttpStatusCode.Unauthorized, oldCode.StatusCode);
         }
         finally
         {
@@ -161,5 +178,33 @@ public class AuthTests(ApiFixture api)
             new TwoFactorLoginRequest(tokens.AccessToken, "123456"), Ct);
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         Assert.Contains("Auth.InvalidChallenge", await response.Content.ReadAsStringAsync(Ct));
+    }
+
+    [Fact]
+    public async Task Changing_the_password_ends_every_session()
+    {
+        var tokens = await LoginOwner();
+        using var authed = api.CreateClient();
+        authed.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokens.AccessToken);
+        const string newPassword = "a-brand-new-owner-password";
+
+        var wrong = await authed.PostAsJsonAsync("/api/v1/admin/account/password", new ChangePasswordBody("not-the-password", newPassword), Ct);
+        Assert.Equal(HttpStatusCode.BadRequest, wrong.StatusCode);
+
+        var changed = await authed.PostAsJsonAsync("/api/v1/admin/account/password", new ChangePasswordBody(ApiFixture.OwnerPassword, newPassword), Ct);
+        Assert.Equal(HttpStatusCode.NoContent, changed.StatusCode);
+        try
+        {
+            Assert.Equal(HttpStatusCode.Unauthorized, (await Refresh(tokens.RefreshToken)).StatusCode);
+            Assert.Equal(HttpStatusCode.Unauthorized, (await Login(ApiFixture.OwnerEmail, ApiFixture.OwnerPassword)).StatusCode);
+            Assert.Equal(HttpStatusCode.OK, (await Login(ApiFixture.OwnerEmail, newPassword)).StatusCode);
+        }
+        finally
+        {
+            var again = (await (await Login(ApiFixture.OwnerEmail, newPassword)).Content.ReadFromJsonAsync<LoginResponse>(Ct))!.Tokens!;
+            using var restore = api.CreateClient();
+            restore.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", again.AccessToken);
+            await restore.PostAsJsonAsync("/api/v1/admin/account/password", new ChangePasswordBody(newPassword, ApiFixture.OwnerPassword), Ct);
+        }
     }
 }

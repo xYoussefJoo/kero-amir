@@ -21,11 +21,25 @@ public static class AccountEndpoints
                 (await handler.HandleAsync(new TwoFactorSetupRequest(user.UserId()), ct)).ToHttp())
             .Produces<TwoFactorSetupResponse>();
 
-        group.MapPost("/2fa/enable", (ClaimsPrincipal user, TwoFactorCodeBody body,
-                    IHandler<SetTwoFactorRequest, bool> handler, CancellationToken ct) =>
-                SetTwoFactor(user, body, enable: true, handler, ct))
+        // Returns the first recovery codes: the only time they are shown.
+        group.MapPost("/2fa/enable", async (ClaimsPrincipal user, TwoFactorCodeBody body,
+                    IHandler<EnableTwoFactorRequest, RecoveryCodesResponse> handler, CancellationToken ct) =>
+                (await handler.HandleAsync(new EnableTwoFactorRequest(user.UserId(), body.Code), ct)).ToHttp())
             .Validate<TwoFactorCodeBody>()
-            .Produces(StatusCodes.Status204NoContent);
+            .Produces<RecoveryCodesResponse>().ProducesValidationProblem();
+
+        group.MapPost("/2fa/recovery-codes", async (ClaimsPrincipal user, TwoFactorCodeBody body,
+                    IHandler<NewRecoveryCodesRequest, RecoveryCodesResponse> handler, CancellationToken ct) =>
+                (await handler.HandleAsync(new NewRecoveryCodesRequest(user.UserId(), body.Code), ct)).ToHttp())
+            .Validate<TwoFactorCodeBody>()
+            .Produces<RecoveryCodesResponse>().ProducesValidationProblem();
+
+        group.MapPost("/password", async (ClaimsPrincipal user, ChangePasswordBody body,
+                    IHandler<ChangePasswordRequest, bool> handler, CancellationToken ct) =>
+                (await handler.HandleAsync(new ChangePasswordRequest(user.UserId(), body.CurrentPassword, body.NewPassword), ct))
+                    .ToHttp(_ => TypedResults.NoContent()))
+            .Validate<ChangePasswordBody>()
+            .Produces(StatusCodes.Status204NoContent).ProducesValidationProblem();
 
         group.MapPost("/2fa/disable", (ClaimsPrincipal user, TwoFactorCodeBody body,
                     IHandler<SetTwoFactorRequest, bool> handler, CancellationToken ct) =>

@@ -33,7 +33,9 @@ internal sealed class TwoFactorLoginRequestValidator : AbstractValidator<TwoFact
     public TwoFactorLoginRequestValidator()
     {
         RuleFor(x => x.ChallengeToken).NotEmpty().MaximumLength(4096);
-        RuleFor(x => x.Code).NotEmpty().Matches("^[0-9]{6}$").WithMessage("Enter the 6-digit code.");
+        // The 6-digit authenticator code, or a recovery code like AB12C-D34EF.
+        RuleFor(x => x.Code).NotEmpty().Matches("^([0-9]{6}|[A-Za-z0-9]{5}-?[A-Za-z0-9]{5})$")
+            .WithMessage("Enter the 6-digit code or a recovery code.");
     }
 }
 
