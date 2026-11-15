@@ -827,3 +827,66 @@ a.admin-nav__link:hover { color: var(--text); background: color-mix(in srgb, var
   list-style: none; font-family: var(--font-mono); font-size: 1rem; letter-spacing: 0.08em;
   background: color-mix(in srgb, var(--muted) 10%, transparent); }
 @media (min-width: 640px) { .admin-codes { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+/* ---- Buttons: the brand hover. A colour "piece" slides in from the start edge (transform only, no repaint of
+   the page), the button lifts slightly and presses down on click. Reduced motion: colour change only. */
+.btn {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.6rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  line-height: 1.2;
+  transition: color 0.3s, border-color 0.3s, translate 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s;
+}
+.btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.btn:hover:not(:disabled)::before, .btn:focus-visible::before { transform: scaleX(1); }
+.btn:hover:not(:disabled) { translate: 0 -2px; }
+.btn:active:not(:disabled) { translate: 0 1px; transition-duration: 0.08s; }
+.btn:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 55%, transparent); outline-offset: 3px; }
+.btn:disabled { opacity: 0.6; cursor: wait; }
+[dir="rtl"] .btn::before { transform-origin: right; }
+
+/* Blue → orange. */
+.btn--primary { background: var(--primary); color: var(--on-primary); }
+.btn--primary::before { background: var(--accent); }
+.btn--primary:hover:not(:disabled), .btn--primary:focus-visible {
+  color: var(--on-accent);
+  box-shadow: 0 12px 24px -12px color-mix(in srgb, var(--accent) 70%, transparent);
+}
+
+/* Outline → filled blue. */
+.btn--outline { border: 1.5px solid var(--text); color: var(--text); }
+.btn--outline::before { background: var(--primary); }
+.btn--outline:hover:not(:disabled), .btn--outline:focus-visible {
+  border-color: var(--primary);
+  color: var(--on-primary);
+  box-shadow: 0 12px 24px -12px color-mix(in srgb, var(--primary) 70%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn, .btn::before { transition: color 0.2s, background-color 0.2s, border-color 0.2s; }
+  .btn:hover:not(:disabled), .btn:active:not(:disabled) { translate: none; }
+  .btn::before { transform: none; opacity: 0; }
+  .btn:hover:not(:disabled)::before, .btn:focus-visible::before { opacity: 1; }
+}
+
+/* Dashboard buttons get the same lift and press. */
+.admin-btn { transition: border-color 0.15s, color 0.15s, background-color 0.15s, translate 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s; }
+.admin-btn:hover:not(:disabled) { translate: 0 -1px; box-shadow: 0 8px 18px -12px color-mix(in srgb, var(--primary) 70%, transparent); }
+.admin-btn:active:not(:disabled) { translate: 0 1px; transition-duration: 0.08s; }
+.admin-btn--primary:hover:not(:disabled) { background: var(--accent); border-color: var(--accent); color: var(--on-accent); filter: none; }
+@media (prefers-reduced-motion: reduce) { .admin-btn:hover:not(:disabled), .admin-btn:active:not(:disabled) { translate: none; } }

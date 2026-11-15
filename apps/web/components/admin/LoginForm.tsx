@@ -124,7 +124,7 @@ function Field({ label, error, children }: { label: string; error?: string; chil
 function Submit({ busy, children }: { busy: boolean; children: React.ReactNode }) {
   return (
     <button type="submit" disabled={busy}
-      className="mt-2 rounded-full bg-primary px-6 py-3 font-semibold text-on-primary transition-opacity hover:opacity-90 disabled:opacity-60">
+      className="btn btn--primary mt-2">
       {busy ? "Please wait…" : children}
     </button>
   );

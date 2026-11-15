@@ -29,13 +29,13 @@ export default function HomePage({ params }: PageProps<"/[locale]">) {
           <div className="flex flex-wrap gap-3 pt-2">
             <a
               href="#work"
-              className="rounded-full bg-primary px-6 py-3 font-semibold text-on-primary transition-opacity hover:opacity-90"
+              className="btn btn--primary"
             >
               {t("ctaWork")}
             </a>
             <a
               href="#contact"
-              className="rounded-full border border-text px-6 py-3 font-semibold transition-colors hover:border-primary hover:text-primary"
+              className="btn btn--outline"
             >
               {t("ctaContact")}
             </a>

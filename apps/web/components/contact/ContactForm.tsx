@@ -100,7 +100,7 @@ export function ContactForm({ locale, labels }: { locale: string; labels: Contac
       <input type="text" tabIndex={-1} autoComplete="off" aria-hidden className="hp-field" {...form.register("website")} />
       {error && <p role="alert" className="text-sm font-medium text-accent sm:col-span-2">{error}</p>}
       <button type="submit" disabled={form.formState.isSubmitting}
-        className="rounded-full bg-primary px-6 py-3 font-semibold text-on-primary transition-opacity hover:opacity-90 disabled:opacity-60 sm:col-span-2 sm:justify-self-start">
+        className="btn btn--primary sm:col-span-2 sm:justify-self-start">
         {form.formState.isSubmitting ? labels.sending : labels.submit}
       </button>
     </form>
