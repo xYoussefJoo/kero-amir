@@ -11,6 +11,8 @@ const flag = (code: string) => String.fromCodePoint(...[...code.toUpperCase()].m
 /** Brand palette, cycled so neighbouring pieces always differ (like a printed jigsaw). */
 const TONES = ["paper", "blue", "ink", "orange"] as const;
 const MAX_PIECES = 8;
+/** Each half of the loop needs at least this many pieces (~22rem each) to stay wider than any screen. */
+const MIN_HALF = 8;
 
 function ReviewPiece({ review, tone, regions, hidden }: {
   review: Testimonial; tone: (typeof TONES)[number]; regions: Intl.DisplayNames; hidden?: boolean;
@@ -47,6 +49,8 @@ export async function ReviewsSection({ locale }: { locale: Locale }) {
   const [reviews, t] = await Promise.all([getTestimonials(), getTranslations({ locale, namespace: "Reviews" })]);
   const regions = new Intl.DisplayNames([locale], { type: "region" });
   const pieces = reviews.slice(0, MAX_PIECES);
+  // Few reviews: repeat them so the strip never runs out and leaves an empty band. Only the first set is read out.
+  const half = Array.from({ length: Math.ceil(MIN_HALF / Math.max(pieces.length, 1)) * pieces.length }, (_, i) => pieces[i % pieces.length]);
 
   const labels: ReviewFormLabels = {
     open: t("form.open"), title: t("form.title"), intro: t("form.intro"), name: t("form.name"),
@@ -66,11 +70,11 @@ export async function ReviewsSection({ locale }: { locale: Locale }) {
       </div>
 
       {pieces.length > 0 && (
-        <div className="review-banner" style={{ "--review-loop": `${pieces.length * 7}s` } as CSSProperties}>
+        <div className="review-banner" style={{ "--review-loop": `${half.length * 7}s` } as CSSProperties}>
           <ul className="review-banner__track">
             {[false, true].map((copy) =>
-              pieces.map((review, i) => (
-                <ReviewPiece key={`${copy ? "b" : "a"}-${review.id}`}review={review} tone={TONES[i % TONES.length]} regions={regions} hidden={copy} />
+              half.map((review, i) => (
+                <ReviewPiece key={`${copy ? "b" : "a"}-${i}-${review.id}`} review={review} tone={TONES[i % TONES.length]} regions={regions} hidden={copy || i >= pieces.length} />
               )),
             )}
           </ul>
